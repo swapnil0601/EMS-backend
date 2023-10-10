@@ -1,6 +1,5 @@
 package com.swapnil.emsbackend.configs;
 
-import com.swapnil.emsbackend.models.Admin;
 import com.swapnil.emsbackend.models.Employee;
 import com.swapnil.emsbackend.models.Record;
 import com.swapnil.emsbackend.repositories.AdminRepository;
@@ -16,15 +15,9 @@ import java.util.List;
 @Configuration
 public class Config {
     @Bean
-    CommandLineRunner commandLineRunner(EmployeeRepository employeeRepository, AdminRepository adminRepository, RecordRepository recordRepository){
+    CommandLineRunner commandLineRunner(EmployeeRepository employeeRepository,  RecordRepository recordRepository){
         return args -> {
-            Admin kunal = new Admin(
-                    "Kunal Agrawal",
-                    "kunalagrawal@gmail.com",
-                    "1234"
-            );
-            adminRepository.saveAll(List.of(kunal));
-
+            
             Employee swapnil = new Employee(
                     "Swapnil Sahoo",
                     "swapnilsahoo100@gmail.com",

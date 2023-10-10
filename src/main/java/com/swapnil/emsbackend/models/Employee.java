@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table
-public class Employee {
+public class Employee extends User {
     @Id
     @SequenceGenerator(
             name = "employee_sequence",
@@ -15,60 +15,30 @@ public class Employee {
             strategy = GenerationType.SEQUENCE,
             generator = "employee_sequence"
     )
-    @Column(name = "employee_id")
-    private long id;
-    private String name;
-    private String email;
-    private String password;
+    private long employeeId;
 
-    public Employee(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
-    public Employee(){
-
+    public Employee() {
     }
 
-    public long getId() {
-        return id;
+    public Employee(Integer userId,long employeeId, String firstName, String lastName, String email, String password, String role) {
+        super(userId,firstName, lastName, email, password, role);
+        this.employeeId = employeeId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public Employee(Integer userId,long employeeId, String firstName, String lastName, String email, String role) {
+        super(userId,firstName, lastName, email, role);
+        this.employeeId = employeeId;
     }
 
-    public String getName() {
-        return name;
+    public Employee(int employeeId){
+        this.employeeId = employeeId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getStudentId() {
+        return (int) employeeId;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public void setStudentId(int employeeId) {
+        this.employeeId = employeeId;
     }
 }
