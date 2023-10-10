@@ -22,7 +22,7 @@ public class User {
             strategy = GenerationType.SEQUENCE,
             generator = "user_sequence"
     )
-    @Column(name = "user_id")
+    @Column(name = "userid")
     Integer userId;
     String firstName, lastName, email, password, role;
 
