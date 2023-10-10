@@ -2,7 +2,7 @@ package com.swapnil.emsbackend.models;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
 @Entity
 @Table
@@ -17,13 +17,9 @@ public class Record {
             strategy = GenerationType.SEQUENCE,
             generator = "record_sequence"
     )
-    private long id;
+    private int recordId,employeeId,departmentId;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
-
-    private LocalDate date;
+    private Date date;
     private boolean present;
     private boolean onSite;
     private boolean doneSyncUpCall;
@@ -31,47 +27,45 @@ public class Record {
     public Record() {
     }
 
-    public Record(Employee employee, LocalDate date, boolean present, boolean onSite, boolean doneSyncUpCall) {
-        this.employee = employee;
+    public Record(int recordId,int employeeId,int departmentId, Date date, boolean present, boolean onSite, boolean doneSyncUpCall) {
+        this.recordId = recordId;
+        this.employeeId = employeeId;
+        this.departmentId = departmentId;
         this.date = date;
         this.present = present;
         this.onSite = onSite;
         this.doneSyncUpCall = doneSyncUpCall;
     }
 
-    @Override
-    public String toString() {
-        return "Record{" +
-                "id=" + id +
-                ", employee=" + employee +
-                ", date=" + date +
-                ", present=" + present +
-                ", onSite=" + onSite +
-                ", doneSyncUpCall=" + doneSyncUpCall +
-                '}';
+    public int getRecordId() {
+        return recordId;
     }
 
-    public long getId() {
-        return id;
+    public void setRecordId(int enrollmentId) {
+        this.recordId = enrollmentId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public int getEmployeeId() {
+        return employeeId;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public void setEmployeeId(int studentId) {
+        this.employeeId = studentId;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public int getDepartmentId() {
+        return departmentId;
     }
 
-    public LocalDate getDate() {
+    public void setDepartmentId(int courseId) {
+        this.departmentId = courseId;
+    }
+
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
