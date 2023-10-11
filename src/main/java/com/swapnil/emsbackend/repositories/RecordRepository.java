@@ -1,31 +1,26 @@
 package com.swapnil.emsbackend.repositories;
 
+import com.swapnil.emsbackend.exceptions.InvalidRequestException;
 import com.swapnil.emsbackend.models.Record;
-import jakarta.transaction.Transactional;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.sql.Date;
+
 import java.util.Map;
+import java.util.List;
+public interface RecordRepository {
+    Integer create(Integer employeeId,Integer departmentId,Date date,boolean present,boolean onsite,boolean doneSyncUpCall) throws InvalidRequestException;
 
-@Repository
-public interface RecordRepository extends JpaRepository<Record,Long> {
+    Integer createDefault(Integer employeeId,Integer departmentId,Date date) throws InvalidRequestException;
 
-    @Query("SELECT r FROM Record r WHERE r.employee.id = :employeeId")
-    List<Record> findAllByEmployeeId(@Param("employeeId") Long employeeId);
+    List<Map<String,Object>> findAll() throws InvalidRequestException;
 
-    @Transactional
-    @Modifying
-    @Query("INSERT INTO Record (employee, date, present, onSite, doneSyncUpCall) " +
-            "SELECT e, :date, false, false, false FROM Employee e " +
-            "WHERE NOT EXISTS (SELECT 1 FROM Record r WHERE r.employee = e AND r.date = :date)")
-    void createDefaultRecordForAllEmployeesOnDate(@Param("date") LocalDate date);
+    Record findById(Integer recordId) throws InvalidRequestException;
 
-    @Query("SELECT r FROM Record r WHERE r.date = :date")
-    List<Record> findAllByDate(@Param("date") LocalDate date);
+    List<Map<String,Object>> findAllByEmployeeId(Integer employeeId) throws InvalidRequestException;
 
+    List<Date> fetchPresentForEmployeeId(Integer employeeId) throws InvalidRequestException;
+
+    List<Date> fetchOnSiteForEmployeeId(Integer employeeId) throws InvalidRequestException;
+
+    Integer update(Integer recordId,Integer employeeId,Integer departmentId,Date date,boolean present,boolean onsite,boolean doneSyncUpCall) throws InvalidRequestException;
 }
