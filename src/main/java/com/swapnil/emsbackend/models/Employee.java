@@ -25,7 +25,7 @@ public class Employee extends User {
         this.employeeId = employeeId;
     }
 
-    public Employee(Integer userId, String firstName, String lastName, String email, String role,int employeeId) {
+    public Employee(Integer userId, String firstName, String lastName, String email, String role,Integer employeeId) {
         super(userId,firstName, lastName, email, role);
         this.employeeId = employeeId;
     }

@@ -86,6 +86,17 @@ public class UserRepositoryImpl implements UserRepository {
     }
     
     @Override
+    public User findByEmail(String email) throws AuthException {
+        try {
+            User user = jdbcTemplate.queryForObject(SQL_USER_FIND_BY_EMAIL, userRowMapper,
+                    new Object[] { email });
+            return user;
+        } catch (EmptyResultDataAccessException e) {
+            throw new AuthException("Invalid Credentials");
+        }
+    }
+
+    @Override
     public User findByEmailAndPassword(String email, String password) throws AuthException {
         try {
             User user = jdbcTemplate.queryForObject(SQL_USER_FIND_BY_EMAIL, userRowMapperWithPassword,

@@ -11,5 +11,7 @@ public interface UserRepository {
 
     User findByEmailAndPassword(String email,String password) throws AuthException;
 
+    User findByEmail(String email) throws AuthException;
+
     void updateUser(Integer userId,User user) throws NotFoundException;
 }
