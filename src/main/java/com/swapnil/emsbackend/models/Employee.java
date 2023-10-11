@@ -20,12 +20,12 @@ public class Employee extends User {
     public Employee() {
     }
 
-    public Employee(Integer userId,long employeeId, String firstName, String lastName, String email, String password, String role) {
+    public Employee(Integer userId, String firstName, String lastName, String email, String password, String role,int employeeId) {
         super(userId,firstName, lastName, email, password, role);
         this.employeeId = employeeId;
     }
 
-    public Employee(Integer userId,long employeeId, String firstName, String lastName, String email, String role) {
+    public Employee(Integer userId, String firstName, String lastName, String email, String role,int employeeId) {
         super(userId,firstName, lastName, email, role);
         this.employeeId = employeeId;
     }

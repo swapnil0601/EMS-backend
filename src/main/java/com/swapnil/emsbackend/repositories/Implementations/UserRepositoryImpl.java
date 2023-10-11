@@ -13,7 +13,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.swapnil.emsbackend.exceptions.AuthException;
-import com.swapnil.emsbackend.exceptions.NotFound;
+import com.swapnil.emsbackend.exceptions.NotFoundException;
 import com.swapnil.emsbackend.models.User;
 import com.swapnil.emsbackend.repositories.UserRepository;
 
@@ -109,7 +109,7 @@ public class UserRepositoryImpl implements UserRepository {
                 user.getFirstName(),user.getLastName(),user.getEmail(),hashedPassword,userId
             });
         } catch (Exception e) {
-            throw new NotFound("User does not exist.");
+            throw new NotFoundException("User does not exist.");
         }
     }
 }
