@@ -1,5 +1,6 @@
 package com.swapnil.emsbackend.controllers;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,9 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.swapnil.emsbackend.models.Employee;
 import com.swapnil.emsbackend.models.Account;
 import com.swapnil.emsbackend.services.EmployeeService;
-import com.swapnil.emsbackend.services.AccountService;
 
-import com.swapnil.emsbackend.Utils.JwtTokenUtil;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
+import com.swapnil.emsbackend.services.AccountService;
+import com.swapnil.emsbackend.Constants;
 
 @RestController
 @RequestMapping("/api/v1/account")
@@ -28,9 +33,6 @@ public class AccountController {
 
     @Autowired
     EmployeeService employeeService;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, Object> accountMap){
@@ -52,7 +54,7 @@ public class AccountController {
         accountResponse.put("email", account.getEmail());
         accountResponse.put("role", account.getRole());
         accountResponse.put("employeeId", employee.getEmployeeId());
-        // accountResponse.put("token", jwtTokenUtil.generateJwtToken(account, employee));
+        accountResponse.put("token", generateJWTToken(account, employee));
 
         return new ResponseEntity<Map<String,Object>>(accountResponse, HttpStatus.OK);
     }
@@ -77,7 +79,7 @@ public class AccountController {
 
         Map<String, Object> returnObj = new HashMap<>();
 
-        // returnObj.put("token", jwtTokenUtil.generateJwtToken(account, employee));
+        returnObj.put("token", generateJWTToken(account, employee));
         returnObj.put("account", accountResponse);
 
         return new ResponseEntity<Map<String,Object>>(returnObj, HttpStatus.OK);
@@ -87,10 +89,13 @@ public class AccountController {
     public ResponseEntity<Map<String, Object>> update(@RequestBody Map<String, Object> accountMap,@PathVariable("accountId") Integer accountId){
         Map<String, Object> returnObj = new HashMap<>();
         String token = (String) accountMap.get("token");
-        boolean valid = jwtTokenUtil.validateJwtToken(token);
-        if(!valid){
-            returnObj.put("message", "Invalid token");
-            return new ResponseEntity<Map<String,Object>>(returnObj, HttpStatus.UNAUTHORIZED);
+        Map<String,Object> tokenMap = Constants.validateToken(token);
+        if (tokenMap.get("valid") == (Boolean) false) {
+            returnObj.put("error", "invalid token");
+            return new ResponseEntity<>(returnObj, HttpStatus.BAD_REQUEST);
+        } else if (tokenMap.get("accountId") != accountId) {
+            returnObj.put("error", "unauthorized access");
+            return new ResponseEntity<>(returnObj, HttpStatus.BAD_REQUEST);
         }
         
         String firstName = (String) accountMap.get("firstName");
@@ -107,5 +112,22 @@ public class AccountController {
         returnObj.put("account",updatedAccount);
 
         return new ResponseEntity<Map<String,Object>>(returnObj, HttpStatus.OK);
+    }
+
+    private String generateJWTToken(Account account, Employee employee) {
+        long timestamp = System.currentTimeMillis();
+        
+        String token = Jwts.builder()
+                .signWith(Keys.hmacShaKeyFor(Constants.API_SECRET_KEY), SignatureAlgorithm.HS256)
+                .setIssuedAt(new Date(timestamp))
+                .setExpiration(new Date(timestamp + 30 * 60 * 1000))
+                .claim("userId", account.getAccountId())
+                .claim("email", account.getEmail())
+                .claim("firstName", account.getFirstName())
+                .claim("lastName", account.getLastName())
+                .claim("role", account.getRole())
+                .claim("employeeId", employee.getEmployeeId())
+                .compact();
+        return token;
     }
 }
