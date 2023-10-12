@@ -15,5 +15,5 @@ public interface EmployeeService {
 
     void deleteEmployee(Integer employeeId) throws RuntimeException;
 
-    Integer getEmployeeIdFromUserId(Integer userId) throws RuntimeException;
+    Integer getEmployeeIdFromAccountId(Integer accountId) throws RuntimeException;
 }

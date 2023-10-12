@@ -35,8 +35,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public Employee addEmployee(Integer employeeId) throws RuntimeException {
         try{
-            Integer userId = employeeRepository.create(employeeId);
-            return employeeRepository.findById(userId);
+            System.out.println("Service " + employeeId);
+            employeeRepository.create(employeeId);
+            return employeeRepository.findById(employeeId);
         }catch(Exception e){
             throw new RuntimeException("Failed to add employee");
         }
@@ -62,11 +63,11 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public Integer getEmployeeIdFromUserId(Integer userId) throws RuntimeException {
+    public Integer getEmployeeIdFromAccountId(Integer accountId) throws RuntimeException {
         try{
-            return employeeRepository.getEmployeeIdFromUserId(userId);
+            return employeeRepository.getEmployeeIdFromAccountId(accountId);
         }catch(Exception e){
-            throw new RuntimeException("Failed to fetch employee id from user id");
+            throw new RuntimeException("Failed to fetch employee id from account id");
         }
     }
 }

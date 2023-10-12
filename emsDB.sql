@@ -3,11 +3,11 @@ DROP TABLE IF EXISTS record;
 DROP TABLE IF EXISTS employeedepartment;
 DROP TABLE IF EXISTS department;
 DROP TABLE IF EXISTS employee;
-DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS account;
 
--- Create the user table
-CREATE TABLE "user" (
-  userid SERIAL PRIMARY KEY,
+-- Create the account table
+CREATE TABLE account (
+  accountid SERIAL PRIMARY KEY,
   firstname VARCHAR NOT NULL,
   lastname VARCHAR,
   email VARCHAR(50) NOT NULL UNIQUE,
@@ -16,20 +16,20 @@ CREATE TABLE "user" (
 );
 
 -- Create the employee table
-CREATE TABLE "employee" (
+CREATE TABLE employee (
   employeeid SERIAL PRIMARY KEY,
-  userid INT UNIQUE,
-  FOREIGN KEY (userid) REFERENCES "user" (userid) ON DELETE CASCADE
+  accountid INT UNIQUE,
+  FOREIGN KEY (accountid) REFERENCES account (accountid) ON DELETE CASCADE
 );
 
 -- Create the department table
-CREATE TABLE "department" (
+CREATE TABLE department (
   departmentid SERIAL PRIMARY KEY,
   departmentname VARCHAR NOT NULL UNIQUE
 );
 
 -- Create the employeedepartment table
-CREATE TABLE "employeedepartment" (
+CREATE TABLE employeedepartment (
   employeeid INT,
   departmentid INT,
   assignmentdate DATE,
@@ -39,7 +39,7 @@ CREATE TABLE "employeedepartment" (
 );
 
 -- Create the record table
-CREATE TABLE "record" (
+CREATE TABLE record (
   recordid SERIAL PRIMARY KEY,
   employeeid INT,
   departmentid INT,

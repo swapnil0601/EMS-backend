@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface EmployeeRepository {
 
-    Integer create(Integer userId) throws InvalidRequestException;
+    Integer create(Integer accountId) throws InvalidRequestException;
 
     List<Employee> findAll() throws InvalidRequestException;
 
     Employee findById(Integer employeeId) throws NotFoundException;
 
-    Integer getEmployeeIdFromUserId(Integer userId) throws NotFoundException;
+    Integer getEmployeeIdFromAccountId(Integer accountId) throws NotFoundException;
 
     void update(Integer employeeId) throws InvalidRequestException;
 

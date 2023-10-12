@@ -1,19 +1,19 @@
 package com.swapnil.emsbackend.models;
-public class User {
+public class Account {
     
-    Integer userId;
+    Integer accountId;
     private String firstName;
     private String lastName;
     private String email;
     private String  password;
     private String  role;
 
-    public User() {
+    public Account() {
 
     }
 
-    public User(Integer userId, String firstName, String lastName, String email, String password, String role) {
-        this.userId = userId;
+    public Account(Integer accountId, String firstName, String lastName, String email, String password, String role) {
+        this.accountId = accountId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -21,8 +21,8 @@ public class User {
         this.role = role;
     }
 
-    public User(Integer userId, String firstName, String lastName, String email, String role) {
-        this.userId = userId;
+    public Account(Integer accountId, String firstName, String lastName, String email, String role) {
+        this.accountId = accountId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -37,12 +37,12 @@ public class User {
         this.role = role;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getAccountId() {
+        return accountId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
     }
 
     public String getFirstName() {
