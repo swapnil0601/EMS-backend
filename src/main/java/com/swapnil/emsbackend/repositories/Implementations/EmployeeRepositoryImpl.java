@@ -22,7 +22,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository{
     
     private static final String SQL_EMPLOYEE_CREATE = "INSERT INTO EMPLOYEE(ACCOUNTID ) VALUES(?);";
 
-    private static final String SQL_FIND_ALL_EMPLOYEE = " SELECT EMPLOYEEID , E.ACCOUNTID , FIRSTNAME , LASTNAME , EMAIL , ROLE FROM EMPLOYEE E JOIN ACCOUNT A WHERE E.ACCOUNTID=A.ACCOUNTID;";
+    private static final String SQL_FIND_ALL_EMPLOYEE = " SELECT EMPLOYEEID , E.ACCOUNTID , FIRSTNAME , LASTNAME , EMAIL , ROLE FROM EMPLOYEE E JOIN ACCOUNT A ON E.ACCOUNTID=A.ACCOUNTID;";
 
     private static final String SQL_FIND_EMPLOYEE_BY_ID = " SELECT EMPLOYEEID , E.ACCOUNTID , FIRSTNAME , LASTNAME , EMAIL , ROLE FROM EMPLOYEE E JOIN ACCOUNT A ON E.ACCOUNTID=A.ACCOUNTID AND EMPLOYEEID = ?;";
 
@@ -63,7 +63,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository{
     @Override
     public List<Employee> findAll() throws InvalidRequestException{
         try{
-            return jdbcTemplate.query(SQL_FIND_ALL_EMPLOYEE, employeeRowMapper,new Object[]{});
+            List<Employee> list = jdbcTemplate.query(SQL_FIND_ALL_EMPLOYEE, employeeRowMapper,new Object[]{});
+            return list;
         }catch(Exception e){
             throw new InvalidRequestException("Invalid Request");
         }
