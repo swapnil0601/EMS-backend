@@ -2,21 +2,9 @@ package com.swapnil.emsbackend.models;
 
 import java.sql.Date;
 
-import jakarta.persistence.*;
 
-@Entity
-@Table
 public class DepartmentAssignment {
 
-    @Id
-    @SequenceGenerator(
-            name = "department_assignment_sequence",
-            sequenceName = "department_assignment_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "department_assignment_sequence")
     int assignmentId;
     int departmentId, employeeId;
     Date assignmentDate;

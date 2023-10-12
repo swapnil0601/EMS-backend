@@ -1,20 +1,5 @@
 package com.swapnil.emsbackend.models;
-
-import jakarta.persistence.*;
-
-@Entity
-@Table
 public class Employee extends User {
-    @Id
-    @SequenceGenerator(
-            name = "employee_sequence",
-            sequenceName = "employee_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "employee_sequence"
-    )
     private long employeeId;
 
     public Employee() {

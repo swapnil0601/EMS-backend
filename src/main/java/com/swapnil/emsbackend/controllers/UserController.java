@@ -20,6 +20,7 @@ import com.swapnil.emsbackend.services.EmployeeService;
 import com.swapnil.emsbackend.services.UserService;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @RestController
@@ -74,11 +75,12 @@ public class UserController {
         userResponse.put("role", user.getRole());
         userResponse.put("employeeId", employee.getEmployeeId());
 
-        Map<String, Object> tokenMap = new HashMap<>();
+        Map<String, Object> returnObj = new HashMap<>();
 
-        tokenMap.put("token", generateJWTToken(user, employee));
+        returnObj.put("token", generateJWTToken(user, employee));
+        returnObj.put("user", userResponse);
 
-        return new ResponseEntity<Map<String,Object>>(tokenMap, HttpStatus.OK);
+        return new ResponseEntity<Map<String,Object>>(returnObj, HttpStatus.OK);
     }
 
     @PostMapping("/update/{userId}")
@@ -113,7 +115,17 @@ public class UserController {
     private String generateJWTToken(User user,Employee employee){
         long timestamp = System.currentTimeMillis();
 
-        Object token = Jwts.builder().signWith(SignatureAlgorithm.HS256, Constants.API_SECRET_KEY).setIssuedAt(new Date(timestamp)).setExpiration(new Date(timestamp + 30*60*1000)).claim("id", user.getUserId()).claim("firstName", user.getFirstName()).claim("lastName", user.getLastName()).claim("email", user.getEmail()).claim("role",user.getRole()).claim("employeeid", employee.getEmployeeId()).compact();
+        Object token = Jwts.builder()
+        .signWith(SignatureAlgorithm.HS256,Keys.hmacShaKeyFor(Constants.API_SECRET_KEY))
+        .setIssuedAt(new Date(timestamp))
+        .setExpiration(new Date(timestamp + 30*60*1000))
+        .claim("id", user.getUserId())
+        .claim("firstName", user.getFirstName())
+        .claim("lastName", user.getLastName())
+        .claim("email", user.getEmail())
+        .claim("role",user.getRole())
+        .claim("employeeid", employee.getEmployeeId())
+        .compact();
 
         return token.toString();
     }

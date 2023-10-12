@@ -33,18 +33,18 @@ public class AdminRepositoryImpl implements AdminRepository{
     }); 
 
     @Override
-    public void assignAdmin(Integer employeeId) throws Exception {
+    public void assignAdmin(Integer userId) throws Exception {
         try {
-            jdbcTemplate.update(SQL_ASSIGN_ADMIN, employeeId);
+            jdbcTemplate.update(SQL_ASSIGN_ADMIN, userId);
         } catch (Exception e) {
             throw new Exception("Error assigning admin");
         }
     }
 
     @Override
-    public void removeAdmin(Integer employeeId) throws Exception {
+    public void removeAdmin(Integer userId) throws Exception {
         try {
-            jdbcTemplate.update(SQL_REMOVE_ADMIN, employeeId);
+            jdbcTemplate.update(SQL_REMOVE_ADMIN, userId);
         } catch (Exception e) {
             throw new Exception("Error removing admin");
         }

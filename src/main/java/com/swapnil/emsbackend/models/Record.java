@@ -1,22 +1,10 @@
 package com.swapnil.emsbackend.models;
 
-import jakarta.persistence.*;
 
 import java.sql.Date;
 
-@Entity
-@Table
 public class Record {
-    @Id
-    @SequenceGenerator(
-            name = "record_sequence",
-            sequenceName = "record_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "record_sequence"
-    )
+    
     private int recordId,employeeId,departmentId;
 
     private Date date;

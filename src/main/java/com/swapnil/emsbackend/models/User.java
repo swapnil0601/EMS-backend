@@ -1,30 +1,12 @@
 package com.swapnil.emsbackend.models;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
-
-@Entity
-@Table
 public class User {
-
-    @Id
-    @SequenceGenerator(
-            name = "user_sequence",
-            sequenceName = "user_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
-    )
-    @Column(name = "userid")
+    
     Integer userId;
-    String firstName, lastName, email, password, role;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String  password;
+    private String  role;
 
     public User() {
 
