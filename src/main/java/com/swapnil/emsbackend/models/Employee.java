@@ -34,11 +34,11 @@ public class Employee extends User {
         this.employeeId = employeeId;
     }
 
-    public int getStudentId() {
+    public int getEmployeeId() {
         return (int) employeeId;
     }
 
-    public void setStudentId(int employeeId) {
+    public void setEmployeeId(int employeeId) {
         this.employeeId = employeeId;
     }
 }

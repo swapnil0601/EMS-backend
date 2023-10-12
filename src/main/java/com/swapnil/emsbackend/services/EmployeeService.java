@@ -9,7 +9,7 @@ public interface EmployeeService {
 
     Employee getEmployeeById(Integer employeeId) throws RuntimeException;
 
-    Employee addEmployee(Employee employee) throws RuntimeException;
+    Employee addEmployee(Integer employeeId) throws RuntimeException;
 
     Employee updateEmployee(Integer employeeId, Employee employee) throws RuntimeException;
 

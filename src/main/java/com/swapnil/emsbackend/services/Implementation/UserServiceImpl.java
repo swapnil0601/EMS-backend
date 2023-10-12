@@ -16,6 +16,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
+
+    @Override
+    public User getUserById(Integer userId) {
+        return userRepository.findById(userId);
+    }
+
     @Override
     public User registerUser(String firstName, String lastName, String email, String password, String role) throws AuthException{
         Pattern pattern = Pattern.compile("^(.+)@(.+)$");
