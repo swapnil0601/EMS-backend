@@ -10,5 +10,7 @@ public interface DepartmentAssignmentService {
     DepartmentAssignment addDepartmentAssignment(Integer employeeId, Integer departmentId)
             throws InvalidRequestException;
 
-    void deleteDepartmentAssignment(Integer departmentAssignmentId) throws NotFoundException;
+    void deleteDepartmentAssignment(Integer employeeId,Integer departmentId) throws NotFoundException;
+
+    void deleteDepartmentAssignmentById(Integer departmentAssignmentId) throws NotFoundException;
 }

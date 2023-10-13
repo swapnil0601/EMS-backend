@@ -38,7 +38,16 @@ public class DepartmentAssignmentServiceImpl implements DepartmentAssignmentServ
     }
 
     @Override
-    public void deleteDepartmentAssignment(Integer departmentAssignmentId) throws NotFoundException {
+    public void deleteDepartmentAssignment(Integer employeeId, Integer departmentId) throws NotFoundException {
+        try{
+            departmentAssignmentRepository.deleteByEmployeeIdDepartmentId(employeeId, departmentId);
+        }catch(Exception e){
+            throw new NotFoundException("Department Assignment not found");
+        }
+    }
+
+    @Override
+    public void deleteDepartmentAssignmentById(Integer departmentAssignmentId) throws NotFoundException {
         try{
             departmentAssignmentRepository.delete(departmentAssignmentId);
         }catch(Exception e){

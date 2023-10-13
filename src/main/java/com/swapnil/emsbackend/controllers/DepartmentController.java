@@ -56,16 +56,16 @@ public class DepartmentController {
     @PostMapping("/create")
     public ResponseEntity<Map<String,Object>> createDepartment(HttpServletRequest request, @RequestBody Map<String,Object> departmentMap){
         Map<String,Object> returnObj = new HashMap<>();
-        // String token = (String) departmentMap.get("token");
-        // Map<String, Object> tokenMap = Constants.validateToken(token);
+        String token = (String) departmentMap.get("token");
+        Map<String, Object> tokenMap = Constants.validateToken(token);
 
-        // if (tokenMap.get("valid") == (Boolean) false) {
-        //     returnObj.put("error", "invalid token");
-        //     return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
-        // } else if (!tokenMap.get("role").equals("admin")) {
-        //     returnObj.put("error", "unauthorized access");
-        //     return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
-        // }
+        if (tokenMap.get("valid") == (Boolean) false) {
+            returnObj.put("error", "invalid token");
+            return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
+        } else if (!tokenMap.get("role").equals("admin")) {
+            returnObj.put("error", "unauthorized access");
+            return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
+        }
 
         try{
             String departmentName = (String) departmentMap.get("departmentName");
@@ -82,16 +82,16 @@ public class DepartmentController {
         @PostMapping("/update/{departmentId}")
         public ResponseEntity<Map<String,Object>> updateDepartment(HttpServletRequest request, @PathVariable("departmentId") int departmentId, @RequestBody Map<String,Object> departmentMap){
             Map<String,Object> returnObj = new HashMap<>();
-            // String token = (String) departmentMap.get("token");
-            // Map<String, Object> tokenMap = Constants.validateToken(token);
+            String token = (String) departmentMap.get("token");
+            Map<String, Object> tokenMap = Constants.validateToken(token);
 
-            // if (tokenMap.get("valid") == (Boolean) false) {
-            //     returnObj.put("error", "invalid token");
-            //     return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
-            // } else if (!tokenMap.get("role").equals("admin")) {
-            //     returnObj.put("error", "unauthorized access");
-            //     return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
-            // }
+            if (tokenMap.get("valid") == (Boolean) false) {
+                returnObj.put("error", "invalid token");
+                return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
+            } else if (!tokenMap.get("role").equals("admin")) {
+                returnObj.put("error", "unauthorized access");
+                return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
+            }
 
             try{
                 String departmentName = (String) departmentMap.get("departmentName");
@@ -108,16 +108,16 @@ public class DepartmentController {
         @DeleteMapping("/{departmentId}")
         public ResponseEntity<Map<String,Object>> deleteDepartment(HttpServletRequest request, @PathVariable("departmentId") int departmentId, @RequestBody Map<String,Object> departmentMap){
             Map<String,Object> returnObj = new HashMap<>();
-            // String token = (String) departmentMap.get("token");
-            // Map<String, Object> tokenMap = Constants.validateToken(token);
+            String token = (String) departmentMap.get("token");
+            Map<String, Object> tokenMap = Constants.validateToken(token);
 
-            // if (tokenMap.get("valid") == (Boolean) false) {
-            //     returnObj.put("error", "invalid token");
-            //     return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
-            // } else if (!tokenMap.get("role").equals("admin")) {
-            //     returnObj.put("error", "unauthorized access");
-            //     return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
-            // }
+            if (tokenMap.get("valid") == (Boolean) false) {
+                returnObj.put("error", "invalid token");
+                return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
+            } else if (!tokenMap.get("role").equals("admin")) {
+                returnObj.put("error", "unauthorized access");
+                return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
+            }
 
             try{
                 departmentService.deleteDepartment(departmentId);
