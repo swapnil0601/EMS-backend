@@ -44,7 +44,7 @@ public class AccountController {
 
         System.out.println("Controller " + firstName);
         Account account = accountService.registerAccount(firstName, lastName, email, password, role);
-
+        
         Employee employee = employeeService.addEmployee(account.getAccountId());
 
         Map<String, Object> accountResponse = new HashMap<>();

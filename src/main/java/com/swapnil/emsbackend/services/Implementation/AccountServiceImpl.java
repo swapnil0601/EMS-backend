@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.swapnil.emsbackend.exceptions.AuthException;
 import com.swapnil.emsbackend.models.Account;
 import com.swapnil.emsbackend.repositories.AccountRepository;
+import com.swapnil.emsbackend.repositories.EmployeeRepository;
 import com.swapnil.emsbackend.services.AccountService;
 
 @Service
@@ -15,6 +16,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     AccountRepository accountRepository;
+
+    // @Autowired
+    // AdminRepository adminRepository;
+
+    @Autowired
+    EmployeeRepository employeeRepository;
 
     @Override
     public Account getAccountById(Integer accountId) {
@@ -24,8 +31,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account registerAccount(String firstName, String lastName, String email, String password, String role) throws AuthException{
 
-        System.out.println("Service Layer " + firstName);
-
         Pattern pattern = Pattern.compile("^(.+)@(.+)$");
 
         if(email != null) {
@@ -34,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
                 throw new AuthException("Invalid email format");
         }
         try{
-            return accountRepository.create(firstName, lastName, email, password, role);        
+            return accountRepository.create(firstName, lastName, email, password, role); 
         }catch(Exception e){
             throw new AuthException("Invalid details. Failed to create account");
         }

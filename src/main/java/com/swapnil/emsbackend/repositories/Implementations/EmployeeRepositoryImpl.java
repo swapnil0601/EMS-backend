@@ -20,7 +20,7 @@ import com.swapnil.emsbackend.repositories.EmployeeRepository;
 @Repository
 public class EmployeeRepositoryImpl implements EmployeeRepository{
     
-    private static final String SQL_EMPLOYEE_CREATE = "INSERT INTO EMPLOYEE(ACCOUNTID ) VALUES(?);";
+    private static final String SQL_EMPLOYEE_CREATE = "INSERT INTO EMPLOYEE(ACCOUNTID) VALUES(?);";
 
     private static final String SQL_FIND_ALL_EMPLOYEE = " SELECT EMPLOYEEID , E.ACCOUNTID , FIRSTNAME , LASTNAME , EMAIL , ROLE FROM EMPLOYEE E JOIN ACCOUNT A ON E.ACCOUNTID=A.ACCOUNTID;";
 
@@ -53,8 +53,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository{
             throws InvalidRequestException {
         try {
             jdbcTemplate.update(SQL_EMPLOYEE_CREATE, new Object[]{accountId});
-            System.out.println("Repository Create" + accountId);
-            return accountId;
+            System.out.println("Employee Repo CREATED EMPLOYEE");
+            return jdbcTemplate.queryForObject(SQL_FETCH_EMPLOYEEID_FOR_ACCOUNTID,employeeIdRowMapper,new Object[]{accountId});
         } catch (Exception e) {
             throw new InvalidRequestException("Invalid Request");
         }

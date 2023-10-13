@@ -37,7 +37,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Department addDepartment(String departmentName) throws RuntimeException {
         try{
+            System.out.println("Service layer: "+departmentName);
             Integer departmentId = departmentRepository.create(departmentName);
+            System.out.println("Service layer: "+departmentId);
             return departmentRepository.findById(departmentId);
         }catch(Exception e){
             throw new RuntimeException("Failed to add department");

@@ -61,10 +61,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         try{
 
             jdbcTemplate.update(SQL_ACCOUNT_CREATE, new Object[] { firstName, lastName, email, hashPassword, role });
-            System.out.println("Repository Layer "+firstName+" "+email);
-            Account account = jdbcTemplate.queryForObject(SQL_ACCOUNT_FIND_BY_EMAIL, accountRowMapper, new Object[] { email });
-            System.out.println(account);
-            return account;
+            return jdbcTemplate.queryForObject(SQL_ACCOUNT_FIND_BY_EMAIL, accountRowMapper, new Object[] { email });
         }catch
         (Exception e){
             throw new AuthException("Invalid details. Failed to create account");

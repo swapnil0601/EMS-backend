@@ -33,10 +33,9 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
-    public Employee addEmployee(Integer employeeId) throws RuntimeException {
+    public Employee addEmployee(Integer accountId) throws RuntimeException {
         try{
-            System.out.println("Service " + employeeId);
-            employeeRepository.create(employeeId);
+            int employeeId = employeeRepository.create(accountId);
             return employeeRepository.findById(employeeId);
         }catch(Exception e){
             throw new RuntimeException("Failed to add employee");

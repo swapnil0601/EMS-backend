@@ -1,14 +1,11 @@
 package com.swapnil.emsbackend.repositories.Implementations;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.swapnil.emsbackend.exceptions.InvalidRequestException;
@@ -21,7 +18,7 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
     
 
     private static final String SQL_DEPARTMENT_CREATE = "INSERT INTO DEPARTMENT(DEPARTMENTNAME) VALUES(?);";
-
+    private static final String SQL_ID_FROM_DEPARTMENTNAME = "SELECT DEPARTMENTID FROM DEPARTMENT WHERE DEPARTMENTNAME = ?;";
     private static final String SQL_FIND_ALL_DEPARTMENT = "SELECT * FROM DEPARTMENT;";
 
     private static final String SQL_FIND_DEPARTMENT_BY_ID = "SELECT * FROM DEPARTMENT WHERE DEPARTMENTID = ?;";
@@ -40,6 +37,10 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
         return new Department(rs.getInt("DEPARTMENTID"), rs.getString("DEPARTMENTNAME"));
     });
 
+    private RowMapper<Integer> departmentIdRowMapper = ((rs, rowNum) -> {
+        return rs.getInt("DEPARTMENTID");
+    });
+
     private RowMapper<Employee> assignedEmployeesRowMapper = ((rs, rowNum) -> {
         return new Employee(
             rs.getInt("USERID"),
@@ -53,19 +54,12 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
 
     @Override
     public Integer create(String departmentName) throws InvalidRequestException {
-        try {
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(SQL_DEPARTMENT_CREATE, Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, departmentName);
-                return ps;
-            }, keyHolder);
-            Number generatedKey = keyHolder.getKey();
-            if (generatedKey != null)
-                return generatedKey.intValue();
-            else
-                return 0;
-        } catch (Exception e) {
+        try{
+            jdbcTemplate.update(SQL_DEPARTMENT_CREATE, new Object[] { departmentName });
+            return jdbcTemplate.queryForObject(SQL_ID_FROM_DEPARTMENTNAME,departmentIdRowMapper,new Object[] { departmentName });
+        }
+        catch
+        (Exception e) {
             throw new InvalidRequestException("Invalid request");
         }
     }
