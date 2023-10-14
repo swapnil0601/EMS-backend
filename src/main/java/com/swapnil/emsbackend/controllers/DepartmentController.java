@@ -57,6 +57,7 @@ public class DepartmentController {
     public ResponseEntity<Map<String,Object>> createDepartment(HttpServletRequest request, @RequestBody Map<String,Object> departmentMap){
         Map<String,Object> returnObj = new HashMap<>();
         String token = (String) departmentMap.get("token");
+        System.out.println(token);
         Map<String, Object> tokenMap = Constants.validateToken(token);
 
         if (tokenMap.get("valid") == (Boolean) false) {

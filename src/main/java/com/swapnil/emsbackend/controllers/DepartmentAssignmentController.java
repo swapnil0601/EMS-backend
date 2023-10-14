@@ -42,6 +42,7 @@ public class DepartmentAssignmentController {
         try{
             Integer departmentId = (Integer) departmentAssignmentMap.get("departmentId");
             Integer employeeId = (Integer) departmentAssignmentMap.get("employeeId");
+            
             DepartmentAssignment newAssignment = departmentAssignmentService.addDepartmentAssignment(employeeId, departmentId);
 
             returnObj.put("data", newAssignment);

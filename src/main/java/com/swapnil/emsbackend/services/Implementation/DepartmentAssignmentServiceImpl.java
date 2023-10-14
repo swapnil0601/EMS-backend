@@ -29,7 +29,11 @@ public class DepartmentAssignmentServiceImpl implements DepartmentAssignmentServ
     public DepartmentAssignment addDepartmentAssignment(Integer employeeId, Integer departmentId) {
        try{
             Date currentDate = new Date(System.currentTimeMillis());
-            int assignmentId=departmentAssignmentRepository.create(employeeId, departmentId, currentDate);
+            int assignmentId=departmentAssignmentRepository.findIdByEmployeeIdDepartmentId(employeeId, departmentId);
+            System.out.println("assignmentId: "+assignmentId);
+            if(assignmentId==-1){
+                assignmentId=departmentAssignmentRepository.create(employeeId, departmentId, currentDate);
+            }
             return departmentAssignmentRepository.findById(assignmentId);
        }
          catch(Exception e){

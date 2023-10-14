@@ -21,6 +21,11 @@ public class Constants {
 
         Map<String, Object> map = new HashMap<>();
 
+        if (token == null || token.trim().isEmpty()) {
+            map.put("valid", false);
+            return map;
+        }
+
         String[] chunks = token.split("\\.");
         String tokenWithoutSignature = chunks[0] + "." + chunks[1];
         String signature = chunks[2];

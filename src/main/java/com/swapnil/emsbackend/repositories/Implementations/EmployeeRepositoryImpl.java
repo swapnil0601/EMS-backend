@@ -53,7 +53,6 @@ public class EmployeeRepositoryImpl implements EmployeeRepository{
             throws InvalidRequestException {
         try {
             jdbcTemplate.update(SQL_EMPLOYEE_CREATE, new Object[]{accountId});
-            System.out.println("Employee Repo CREATED EMPLOYEE");
             return jdbcTemplate.queryForObject(SQL_FETCH_EMPLOYEEID_FOR_ACCOUNTID,employeeIdRowMapper,new Object[]{accountId});
         } catch (Exception e) {
             throw new InvalidRequestException("Invalid Request");
@@ -73,9 +72,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository{
     @Override
     public Employee findById(Integer employeeId) throws NotFoundException,InvalidRequestException{
         try{
-            System.out.println("FIND BY ID "+employeeId);
             Employee employee = jdbcTemplate.queryForObject(SQL_FIND_EMPLOYEE_BY_ID,employeeRowMapper,new Object[]{employeeId});
-            System.out.println("FIND BY ID "+employeeId);
             return employee;
         }catch(EmptyResultDataAccessException e){
             throw new NotFoundException("Employee Not Found");
