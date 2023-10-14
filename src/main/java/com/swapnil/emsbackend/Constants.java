@@ -50,23 +50,20 @@ public class Constants {
 
             JsonNode claimsNode = objectMapper.readTree(payload);
 
-            int userId = claimsNode.get("userId").asInt();
+            int accountId = claimsNode.get("accountId").asInt();
             String email = claimsNode.get("email").asText();
             String firstName = claimsNode.get("firstName").asText();
             String lastName = claimsNode.get("lastName").asText();
             String role = claimsNode.get("role").asText();
 
-            map.put("userId", userId);
+            map.put("accountId", accountId);
             map.put("email", email);
             map.put("firstName", firstName);
             map.put("lastName", lastName);
             map.put("role", role);
 
-            if (claimsNode.has("studentId")) {
-                map.put("studentId", claimsNode.get("studentId").asInt());
-            }
-            if (claimsNode.has("childId")) {
-                map.put("childId", claimsNode.get("childId").asInt());
+            if (claimsNode.has("employeeId")) {
+                map.put("employeeId", claimsNode.get("employeeId").asInt());
             }
 
         } catch (Exception e) {
