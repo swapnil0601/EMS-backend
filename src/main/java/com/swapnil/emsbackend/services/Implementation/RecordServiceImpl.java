@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+// import com.swapnil.emsbackend.exceptions.InvalidRequestException;
 import com.swapnil.emsbackend.exceptions.NotFoundException;
 import com.swapnil.emsbackend.repositories.RecordRepository;
 import com.swapnil.emsbackend.services.RecordService;
@@ -43,9 +44,36 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
+    public List<Map<String, Object>> createDefaultRecordForAllEmployees(Date date) throws NotFoundException{
+        try{
+            List<Map<String, Object>> records=recordRepository.findAllByDate(date);
+            System.out.println("Service Layer: Created Records "+date);
+            if(records.isEmpty())
+            {
+                recordRepository.createDefaultForAllEmployees(date);
+                records=recordRepository.findAllByDate(date);
+            }
+            return records;
+        }
+        catch(Exception e){
+            throw new NotFoundException("Record not found");
+        }
+    }
+
+    @Override
     public Record getRecordById(Integer recordId) throws NotFoundException{
         try{
             return recordRepository.findById(recordId);
+        }
+        catch(Exception e){
+            throw new NotFoundException("Record not found");
+        }
+    }
+
+    @Override
+    public List<Map<String,Object>> getAllRecordsByDate(Date date) throws NotFoundException{
+        try{
+            return recordRepository.findAllByDate(date);
         }
         catch(Exception e){
             throw new NotFoundException("Record not found");

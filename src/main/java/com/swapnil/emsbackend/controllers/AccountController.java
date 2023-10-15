@@ -36,8 +36,8 @@ public class AccountController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, Object> accountMap){
-        String firstName = (String) accountMap.get("firstName");
-        String lastName = (String) accountMap.get("lastName");
+        String firstName = (String) accountMap.get("firstname");
+        String lastName = (String) accountMap.get("lastname");
         String email = (String) accountMap.get("email");
         String password = (String) accountMap.get("password");
         String role = (String) accountMap.get("role");

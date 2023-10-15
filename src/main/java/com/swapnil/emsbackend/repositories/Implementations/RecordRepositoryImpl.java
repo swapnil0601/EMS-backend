@@ -1,7 +1,5 @@
 package com.swapnil.emsbackend.repositories.Implementations;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.Date;
 
 import java.util.List;
@@ -10,8 +8,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.swapnil.emsbackend.exceptions.InvalidRequestException;
@@ -22,19 +18,23 @@ import com.swapnil.emsbackend.repositories.RecordRepository;
 public class RecordRepositoryImpl implements RecordRepository {
 
 
-    public final static String SQL_CREATE_RECORD = "INSERT INTO record (employee_id,department_id,date,present,on_site,done_sync_up_call) VALUES (?,?,?,?,?,?)";
+    public final static String SQL_CREATE_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (?,?,?,?,?,?) returning recordid";
 
-    public final static String SQL_CREATE_DEFAULT_RECORD = "INSERT INTO record (employee_id,department_id,date,present,on_site,done_sync_up_call) VALUES (?,?,?,false,false,false)";
+    public final static String SQL_CREATE_DEFAULT_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (?,?,?,false,false,false)";
 
-    public final static String SQL_UPDATE_RECORD = "UPDATE record SET employee_id = ?,department_id = ?,date = ?,present = ?,on_site = ?,done_sync_up_call = ? WHERE record_id = ?";
+    public final static String SQL_CREATE_DEFAULT_RECORD_FOR_ALL_EMPLOYEES = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) SELECT employee.employeeid,employee.departmentid,?,false,false,false FROM employee";
+
+    public final static String SQL_UPDATE_RECORD = "UPDATE record SET employeeid = ?,departmentid = ?,date = ?,present = ?,onsite = ?,donesyncupcall = ? WHERE recordid = ?";
 
     public final static String SQL_FIND_ALL_RECORDS = "SELECT * FROM record";
 
-    public final static String SQL_FIND_ALL_RECORDS_BY_EMPLOYEE_ID = "SELECT * FROM record WHERE employee_id = ?";
+    public final static String SQL_FIND_ALL_RECORDS_BY_EMPLOYEE_ID = "SELECT * FROM record WHERE employeeid = ?";
 
-    public final static String SQL_FETCH_PRESENT_FOR_EMPLOYEE_ID = "SELECT date FROM record WHERE employee_id = ? AND present = true";
+    public final static String SQL_FIND_ALL_RECORDS_BY_DATE_WITH_EMPLOYEE_INFO = "SELECT record.*,employee.employeename FROM record INNER JOIN employee ON record.employeeid = employee.employeeid WHERE recorddate = ?";
 
-    public final static String SQL_FETCH_ON_SITE_FOR_EMPLOYEE_ID = "SELECT date FROM record WHERE employee_id = ? AND on_site = true";
+    public final static String SQL_FETCH_PRESENT_FOR_EMPLOYEE_ID = "SELECT date FROM record WHERE employeeid = ? AND present = true";
+
+    public final static String SQL_FETCH_ON_SITE_FOR_EMPLOYEE_ID = "SELECT date FROM record WHERE employeeid = ? AND onsite = true";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -43,22 +43,8 @@ public class RecordRepositoryImpl implements RecordRepository {
     public Integer create(Integer employeeId, Integer departmentId, Date date, boolean present, boolean onsite,
             boolean doneSyncUpCall) throws InvalidRequestException {
         try {
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(SQL_CREATE_RECORD, Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, employeeId);
-                ps.setInt(2, departmentId);
-                ps.setDate(3, date);
-                ps.setBoolean(4, present);
-                ps.setBoolean(5, onsite);
-                ps.setBoolean(6, doneSyncUpCall);
-                return ps;
-            }, keyHolder);
-            Number generatedKey = keyHolder.getKey();
-            if (generatedKey != null)
-                return generatedKey.intValue();
-            else
-                return 0;
+            return jdbcTemplate.update(SQL_CREATE_RECORD, new Object[] { employeeId, departmentId, date, present, onsite,
+                    doneSyncUpCall });
         } catch (Exception e) {
             System.out.println(e.getMessage());
             if (e.getMessage().contains("Duplicate"))
@@ -75,19 +61,23 @@ public class RecordRepositoryImpl implements RecordRepository {
     @Override
     public Integer createDefault(Integer employeeId, Integer departmentId, Date date) throws InvalidRequestException {
         try {
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(SQL_CREATE_RECORD, Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, employeeId);
-                ps.setInt(2, departmentId);
-                ps.setDate(3, date);
-                return ps;
-            }, keyHolder);
-            Number generatedKey = keyHolder.getKey();
-            if (generatedKey != null)
-                return generatedKey.intValue();
+            return jdbcTemplate.update(SQL_CREATE_DEFAULT_RECORD, new Object[] { employeeId, departmentId, date });
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            if (e.getMessage().contains("Duplicate"))
+                throw new InvalidRequestException("Attendance already marked");
+            else if (e.getMessage().contains("foreign key"))
+                throw new InvalidRequestException(
+                        "Either Employee and/or Department does not exist . Or Employee is not assigned to the department.");
             else
-                return 0;
+                throw new InvalidRequestException("Invalid request");
+        }
+    }
+
+    @Override
+    public Integer createDefaultForAllEmployees(Date date) throws InvalidRequestException {
+        try {
+            return jdbcTemplate.update(SQL_CREATE_DEFAULT_RECORD_FOR_ALL_EMPLOYEES,new Object[]{date});
         } catch (Exception e) {
             System.out.println(e.getMessage());
             if (e.getMessage().contains("Duplicate"))
@@ -113,6 +103,12 @@ public class RecordRepositoryImpl implements RecordRepository {
                 "doneSyncUpCall",rs.getBoolean("DONESYNCUPCALL"));
     });
 
+    private RowMapper<Map<String,Object>> recordByDateWithEmployeeInfoRowMapper = ((rs, rowNum) -> {
+        return Map.of("recordId",rs.getInt("RECORDID"),"employeeId",rs.getInt("EMPLOYEEID"),"departmentId",rs.getInt("DEPARTMENTID"),
+                "date",rs.getDate("DATE"),"present",rs.getBoolean("PRESENT"),"onSite",rs.getBoolean("ONSITE"),
+                "doneSyncUpCall",rs.getBoolean("DONESYNCUPCALL"),"employeeName",rs.getString("EMPLOYEENAME"));
+    });
+
     private RowMapper<Date> dateRowMapper = ((rs, rowNum) -> {
         return rs.getDate("DATE");
     });
@@ -132,6 +128,16 @@ public class RecordRepositoryImpl implements RecordRepository {
     public List<Map<String,Object>> findAll() throws InvalidRequestException {
         try {
             return jdbcTemplate.query(SQL_FIND_ALL_RECORDS,recordByDepartmentIdRowMapper);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new InvalidRequestException("Invalid request");
+        }
+    }
+
+    @Override
+    public List<Map<String,Object>> findAllByDate(Date date) throws InvalidRequestException {
+        try {
+            return jdbcTemplate.query(SQL_FIND_ALL_RECORDS_BY_DATE_WITH_EMPLOYEE_INFO,recordByDateWithEmployeeInfoRowMapper,date);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new InvalidRequestException("Invalid request");

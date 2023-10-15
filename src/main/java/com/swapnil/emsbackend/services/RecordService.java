@@ -13,11 +13,17 @@ public interface RecordService {
 
     Record addDefaultRecord(Integer employeeId, Integer departmentId, Date date) throws NotFoundException;
 
+    List<Map<String,Object>> createDefaultRecordForAllEmployees(Date date) throws NotFoundException;
+
+//     List<Map<String, Object>> getRecordsOfDepartment(Integer departmentId) throws NotFoundException;
+
     Record getRecordById(Integer recordId) throws NotFoundException;
 
     List<Map<String, Object>> getRecordsOfEmployee(Integer employeeId) throws NotFoundException;
 
     List<Map<String, Object>> getAllRecords() throws NotFoundException;
+
+    List<Map<String, Object>> getAllRecordsByDate(Date date) throws NotFoundException;
 
     List<Date> getPresentDatesOfEmployee(Integer employeeId) throws NotFoundException;
 

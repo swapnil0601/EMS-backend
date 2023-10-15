@@ -12,7 +12,11 @@ public interface RecordRepository {
 
     Integer createDefault(Integer employeeId,Integer departmentId,Date date) throws InvalidRequestException;
 
+    Integer createDefaultForAllEmployees(Date date) throws InvalidRequestException;
+
     List<Map<String,Object>> findAll() throws InvalidRequestException;
+
+    List<Map<String,Object>> findAllByDate(Date date) throws InvalidRequestException;
 
     Record findById(Integer recordId) throws InvalidRequestException;
 
