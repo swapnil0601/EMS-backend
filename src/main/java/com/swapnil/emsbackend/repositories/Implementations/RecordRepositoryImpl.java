@@ -18,7 +18,7 @@ import com.swapnil.emsbackend.repositories.RecordRepository;
 public class RecordRepositoryImpl implements RecordRepository {
 
 
-    public final static String SQL_CREATE_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (?,?,?,?,?,?) returning recordid";
+    public final static String SQL_CREATE_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (?,?,?,?,?,?)";
 
     public final static String SQL_CREATE_DEFAULT_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (?,?,?,false,false,false)";
 
@@ -29,6 +29,8 @@ public class RecordRepositoryImpl implements RecordRepository {
     public final static String SQL_FIND_ALL_RECORDS = "SELECT * FROM record";
 
     public final static String SQL_FIND_ALL_RECORDS_BY_EMPLOYEE_ID = "SELECT * FROM record WHERE employeeid = ?";
+
+    public final static String SQL_FIND_BY_EMPLOYEEID_DATE = "SELECT * FROM record WHERE employeeid = ? AND recorddate = ?";
 
     public final static String SQL_FIND_ALL_RECORDS_BY_DATE_WITH_EMPLOYEE_INFO = "SELECT record.*,employee.employeename FROM record INNER JOIN employee ON record.employeeid = employee.employeeid WHERE recorddate = ?";
 
@@ -43,6 +45,7 @@ public class RecordRepositoryImpl implements RecordRepository {
     public Integer create(Integer employeeId, Integer departmentId, Date date, boolean present, boolean onsite,
             boolean doneSyncUpCall) throws InvalidRequestException {
         try {
+            System.out.println("Repository Record Create");
             return jdbcTemplate.update(SQL_CREATE_RECORD, new Object[] { employeeId, departmentId, date, present, onsite,
                     doneSyncUpCall });
         } catch (Exception e) {
@@ -54,6 +57,16 @@ public class RecordRepositoryImpl implements RecordRepository {
                         "Either Employee and/or Department does not exist . Or Employee is not assigned to the department.");
             else
                 throw new InvalidRequestException("Invalid request");
+        }
+    }
+
+    @Override
+    public Record getRecordByEmployeeIdDate(Integer employeeId, Date date) throws InvalidRequestException {
+        try {
+            return jdbcTemplate.queryForObject(SQL_FIND_BY_EMPLOYEEID_DATE, recordRowMapper, new Object[]{employeeId,date});
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new InvalidRequestException("Invalid request");
         }
     }
 
@@ -117,6 +130,7 @@ public class RecordRepositoryImpl implements RecordRepository {
     @Override
     public Record findById(Integer recordId) throws InvalidRequestException {
         try {
+            System.out.println("Record Repo Find by Id");
             return jdbcTemplate.queryForObject(SQL_FIND_ALL_RECORDS, recordRowMapper, recordId);
         } catch (Exception e) {
             System.out.println(e.getMessage());

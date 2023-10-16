@@ -118,7 +118,7 @@ public class AccountController {
                 .signWith(Keys.hmacShaKeyFor(Constants.API_SECRET_KEY), SignatureAlgorithm.HS256)
                 .setIssuedAt(new Date(timestamp))
                 .setExpiration(new Date(timestamp + 30 * 60 * 1000))
-                .claim("userId", account.getAccountId())
+                .claim("accountId", account.getAccountId())
                 .claim("email", account.getEmail())
                 .claim("firstName", account.getFirstName())
                 .claim("lastName", account.getLastName())

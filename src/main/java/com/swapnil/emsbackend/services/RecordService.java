@@ -8,14 +8,13 @@ import com.swapnil.emsbackend.exceptions.NotFoundException;
 import com.swapnil.emsbackend.models.Record;
 
 public interface RecordService {
-    Record addRecord(Integer employeeId, Integer departmentId, String date, boolean present, boolean onsite,
+    Record addRecord(Integer employeeId, Integer departmentId, Date date, boolean present, boolean onsite,
             boolean doneSyncUpCall) throws NotFoundException;
 
     Record addDefaultRecord(Integer employeeId, Integer departmentId, Date date) throws NotFoundException;
 
     List<Map<String,Object>> createDefaultRecordForAllEmployees(Date date) throws NotFoundException;
 
-//     List<Map<String, Object>> getRecordsOfDepartment(Integer departmentId) throws NotFoundException;
 
     Record getRecordById(Integer recordId) throws NotFoundException;
 

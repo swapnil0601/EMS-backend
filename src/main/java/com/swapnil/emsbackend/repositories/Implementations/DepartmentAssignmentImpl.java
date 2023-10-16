@@ -27,6 +27,8 @@ public class DepartmentAssignmentImpl implements DepartmentAssignmentRepository{
 
     private final String SQL_ID_FROM_DEPARTMENTID_EMPLOYEEID = "SELECT ASSIGNMENTID FROM employeedepartment WHERE DEPARTMENTID = ? AND EMPLOYEEID = ?";
 
+    private final String SQL_DEPARTMENTID_FROM_EMPLOYEEID = "SELECT DEPARTMENTID FROM employeedepartment WHERE EMPLOYEEID = ?";
+
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -41,6 +43,9 @@ public class DepartmentAssignmentImpl implements DepartmentAssignmentRepository{
 
     private RowMapper<Integer> departmentAssignmentIdRowMapper = ((rs, rowNum) -> {
         return rs.getInt("assignmentid");
+    });
+    private RowMapper<Integer> departmentIdRowMapper = ((rs, rowNum) -> {
+        return rs.getInt("departmentid");
     });
 
     @Override
@@ -63,7 +68,17 @@ public class DepartmentAssignmentImpl implements DepartmentAssignmentRepository{
     }
 
     @Override
-    public Integer create(Integer departmentId, Integer employeeId, Date date) throws InvalidRequestException {
+    public Integer getDepartmentIdFromEmployeeId(Integer employeeId) throws NotFoundException {
+        try {
+            System.out.println("Assign Repo "+employeeId);
+            return jdbcTemplate.queryForObject(SQL_DEPARTMENTID_FROM_EMPLOYEEID, departmentIdRowMapper, employeeId);
+        } catch (Exception e) {
+            throw new NotFoundException("Department Assignment not found");
+        }
+    }
+
+    @Override
+    public Integer create(Integer employeeId, Integer departmentId, Date date) throws InvalidRequestException {
         try{
             jdbcTemplate.update(SQL_CREATE, new Object[] { departmentId, employeeId, date });
             return jdbcTemplate.queryForObject(SQL_ID_FROM_DEPARTMENTID_EMPLOYEEID, departmentAssignmentIdRowMapper, new Object[] { departmentId, employeeId });

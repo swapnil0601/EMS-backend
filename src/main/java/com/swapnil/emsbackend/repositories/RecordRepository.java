@@ -14,6 +14,8 @@ public interface RecordRepository {
 
     Integer createDefaultForAllEmployees(Date date) throws InvalidRequestException;
 
+    Record getRecordByEmployeeIdDate(Integer employeeId,Date date) throws InvalidRequestException;
+
     List<Map<String,Object>> findAll() throws InvalidRequestException;
 
     List<Map<String,Object>> findAllByDate(Date date) throws InvalidRequestException;

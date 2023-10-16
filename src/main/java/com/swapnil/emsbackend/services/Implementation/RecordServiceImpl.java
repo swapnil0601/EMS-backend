@@ -19,12 +19,12 @@ public class RecordServiceImpl implements RecordService{
     RecordRepository recordRepository;
 
     @Override
-    public com.swapnil.emsbackend.models.Record addRecord(Integer employeeId, Integer departmentId, String date, boolean present, boolean onsite,
+    public Record addRecord(Integer employeeId, Integer departmentId, Date date, boolean present, boolean onsite,
             boolean doneSyncUpCall) throws NotFoundException {
+        System.out.println("Service Layer Add Record");
         try{
-            Date currentDate = new Date(System.currentTimeMillis());
-            int recordId=recordRepository.create(employeeId, departmentId, currentDate, present, onsite, doneSyncUpCall);
-            return recordRepository.findById(recordId);
+            int affectedRows=recordRepository.create(employeeId, departmentId, date, present, onsite, doneSyncUpCall);
+            return recordRepository.getRecordByEmployeeIdDate(employeeId, date);
         }
         catch(Exception e){
             throw new NotFoundException("Record not found");

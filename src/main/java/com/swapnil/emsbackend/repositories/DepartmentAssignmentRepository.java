@@ -11,6 +11,8 @@ public interface DepartmentAssignmentRepository {
 
     Integer create(Integer departmentId, Integer employeeId, Date assignmentDate) throws InvalidRequestException;
 
+    Integer getDepartmentIdFromEmployeeId(Integer employeeId) throws NotFoundException;
+
     Integer findIdByEmployeeIdDepartmentId(Integer employeeId,Integer departmentId) throws InvalidRequestException;
 
     void delete(Integer assignmentId) throws NotFoundException;

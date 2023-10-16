@@ -20,9 +20,8 @@ public class Constants {
     public static Map<String, Object> validateToken(String token) {
 
         Map<String, Object> map = new HashMap<>();
-
+        map.put("valid",false);
         if (token == null || token.trim().isEmpty()) {
-            map.put("valid", false);
             return map;
         }
 
@@ -35,15 +34,12 @@ public class Constants {
         DefaultJwtSignatureValidator validator = new DefaultJwtSignatureValidator(sa, secretKeySpec);
 
         if (!validator.isValid(tokenWithoutSignature, signature)) {
-            map.put("valid", false);
             return map;
         }
 
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String header = new String(decoder.decode(chunks[0]));
         String payload = new String(decoder.decode(chunks[1]));
-
-        map.put("valid", true);
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -65,7 +61,7 @@ public class Constants {
             if (claimsNode.has("employeeId")) {
                 map.put("employeeId", claimsNode.get("employeeId").asInt());
             }
-
+            map.put("valid", true);
         } catch (Exception e) {
 
         }

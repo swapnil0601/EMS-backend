@@ -1,6 +1,7 @@
 package com.swapnil.emsbackend.controllers;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.swapnil.emsbackend.Constants;
 import com.swapnil.emsbackend.models.Record;
+import com.swapnil.emsbackend.services.DepartmentAssignmentService;
 import com.swapnil.emsbackend.services.RecordService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +29,9 @@ public class RecordController {
     @Autowired 
     RecordService recordService;
 
+    @Autowired
+    DepartmentAssignmentService departmentAssignmentService;
+
     @PostMapping("/addrecord")
     public ResponseEntity<Map<String,Object>> addRecord(HttpServletRequest request,
             @RequestBody Map<String, Object> map){
@@ -34,6 +39,7 @@ public class RecordController {
 
         String token = (String) map.get("token");
         Map<String, Object> tokenMap = Constants.validateToken(token);
+        System.out.println(tokenMap);
 
         if (tokenMap.get("valid") == (Boolean) false) {
             returnObj.put("error", "invalid token");
@@ -42,15 +48,22 @@ public class RecordController {
             returnObj.put("error", "unauthorized access");
             return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
         }
+        System.out.println(map);
+
         try{
-            Date currentDate = new Date(System.currentTimeMillis());
+            String dateString = map.get("date").toString();
+            LocalDate localDate = LocalDate.parse(dateString);
+            Date date = Date.valueOf(localDate);
+//            System.out.println("Record Controller "+date);
             Integer employeeId = (Integer) map.get("employeeId");
-            Integer departmentId = (Integer) map.get("departmentId");
+            Integer departmentId = departmentAssignmentService.getDepartmentIdFromEmployeeId(employeeId);
+            System.out.println("Controller " + departmentId);
             Boolean present = (Boolean) map.get("present");
-            Boolean onsite = (Boolean) map.get("onsite");
+            Boolean onsite = (Boolean) map.get("onSite");
             Boolean doneSyncUpCall = (Boolean) map.get("doneSyncUpCall");
 
-            Record newRecord = recordService.addRecord(employeeId, departmentId, currentDate.toString(), present, onsite, doneSyncUpCall);
+            Record newRecord = recordService.addRecord(employeeId, departmentId, date, present, onsite, doneSyncUpCall);
+            System.out.println("Controller Record Created");
             returnObj.put("data", newRecord);
             return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
         }

@@ -26,6 +26,16 @@ public class DepartmentAssignmentServiceImpl implements DepartmentAssignmentServ
     }
 
     @Override
+    public Integer getDepartmentIdFromEmployeeId(Integer employeeId) throws NotFoundException {
+        try{
+            System.out.println("Assign Service "+employeeId);
+            return departmentAssignmentRepository.getDepartmentIdFromEmployeeId(employeeId);
+        }catch(Exception e){
+            throw new NotFoundException("Department Assignment not found");
+        }
+    }
+
+    @Override
     public DepartmentAssignment addDepartmentAssignment(Integer employeeId, Integer departmentId) {
        try{
             Date currentDate = new Date(System.currentTimeMillis());

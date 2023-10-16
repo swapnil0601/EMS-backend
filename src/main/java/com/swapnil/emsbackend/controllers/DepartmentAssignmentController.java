@@ -27,7 +27,7 @@ public class DepartmentAssignmentController {
     @PostMapping("/assignEmployee")
     public ResponseEntity<Map<String,Object>> assignEmployeeToDepartment(HttpServletRequest request, @RequestBody Map<String,Object> departmentAssignmentMap){
         Map<String,Object> returnObj = new HashMap<>();
-        
+        System.out.println(departmentAssignmentMap);
         String token = (String) departmentAssignmentMap.get("token");
         Map<String, Object> tokenMap = Constants.validateToken(token);
 

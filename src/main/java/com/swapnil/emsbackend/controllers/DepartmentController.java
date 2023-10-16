@@ -59,7 +59,7 @@ public class DepartmentController {
         String token = (String) departmentMap.get("token");
         System.out.println(token);
         Map<String, Object> tokenMap = Constants.validateToken(token);
-
+        System.out.println(tokenMap);
         if (tokenMap.get("valid") == (Boolean) false) {
             returnObj.put("error", "invalid token");
             return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
