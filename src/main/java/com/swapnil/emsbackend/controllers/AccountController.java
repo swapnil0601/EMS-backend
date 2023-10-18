@@ -36,24 +36,26 @@ public class AccountController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, Object> accountMap){
-        String firstName = (String) accountMap.get("firstname");
-        String lastName = (String) accountMap.get("lastname");
+        String firstName = (String) accountMap.get("firstName");
+        String lastName = (String) accountMap.get("lastName");
         String email = (String) accountMap.get("email");
         String password = (String) accountMap.get("password");
         String role = (String) accountMap.get("role");
 
-        Account account = accountService.registerAccount(firstName, lastName, email, password, role);
+        Account account = accountService.register(firstName, lastName, email, password, role);
         
         Employee employee = employeeService.addEmployee(account.getAccountId());
 
         Map<String, Object> accountResponse = new HashMap<>();
-        accountResponse.put("accountId", account.getAccountId());
-        accountResponse.put("firstName", account.getFirstName());
-        accountResponse.put("lastName", account.getLastName());
-        accountResponse.put("email", account.getEmail());
-        accountResponse.put("role", account.getRole());
-        accountResponse.put("employeeId", employee.getEmployeeId());
+        Map<String, Object> accRes = new HashMap<>();
+        accRes.put("accountId", account.getAccountId());
+        accRes.put("firstName", account.getFirstName());
+        accRes.put("lastName", account.getLastName());
+        accRes.put("email", account.getEmail());
+        accRes.put("role", account.getRole());
+        accRes.put("employeeId", employee.getEmployeeId());
         accountResponse.put("token", generateJWTToken(account, employee));
+        accountResponse.put("account", accRes);
 
         return new ResponseEntity<Map<String,Object>>(accountResponse, HttpStatus.OK);
     }
@@ -64,7 +66,7 @@ public class AccountController {
         String email = (String) accountMap.get("email");
         String password = (String) accountMap.get("password");
         System.out.println(email+" "+password);
-        Account account = accountService.validateAccount(email, password);
+        Account account = accountService.login(email, password);
         Employee employee = employeeService.getEmployeeById(account.getAccountId());
         Map<String, Object> accountResponse = new HashMap<>();
         accountResponse.put("accountId", account.getAccountId());
@@ -102,7 +104,7 @@ public class AccountController {
         String role = (String) accountMap.get("role");
 
         Account account = new Account(accountId, firstName, lastName, email, password, role);
-        Account updatedAccount = accountService.updateAccount(accountId, account);
+        Account updatedAccount = accountService.update(accountId, account);
 
         returnObj.put("success",true);
         returnObj.put("message","Account updated successfully");

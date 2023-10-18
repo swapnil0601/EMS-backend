@@ -23,8 +23,7 @@ public class RecordServiceImpl implements RecordService{
             boolean doneSyncUpCall) throws NotFoundException {
         System.out.println("Service Layer Add Record");
         try{
-            int affectedRows=recordRepository.create(employeeId, departmentId, date, present, onsite, doneSyncUpCall);
-            return recordRepository.getRecordByEmployeeIdDate(employeeId, date);
+            return recordRepository.create(employeeId, departmentId, date, present, onsite, doneSyncUpCall);
         }
         catch(Exception e){
             throw new NotFoundException("Record not found");

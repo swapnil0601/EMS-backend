@@ -13,5 +13,5 @@ public interface AccountRepository {
 
     Account findByEmail(String email) throws AuthException;
 
-    void updateAccount(Integer accountId,Account account) throws NotFoundException;
+    void update(Integer accountId,Account account) throws NotFoundException;
 }

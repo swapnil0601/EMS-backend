@@ -8,6 +8,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.swapnil.emsbackend.exceptions.InvalidRequestException;
@@ -18,13 +22,15 @@ import com.swapnil.emsbackend.repositories.RecordRepository;
 public class RecordRepositoryImpl implements RecordRepository {
 
 
-    public final static String SQL_CREATE_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (?,?,?,?,?,?)";
+    public final static String SQL_CREATE_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (:employeeId,:departmentId,:date,:present,:onsite,:doneSyncUpCall)";
 
     public final static String SQL_CREATE_DEFAULT_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (?,?,?,false,false,false)";
 
     public final static String SQL_CREATE_DEFAULT_RECORD_FOR_ALL_EMPLOYEES = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) SELECT employee.employeeid,employee.departmentid,?,false,false,false FROM employee";
 
     public final static String SQL_UPDATE_RECORD = "UPDATE record SET employeeid = ?,departmentid = ?,date = ?,present = ?,onsite = ?,donesyncupcall = ? WHERE recordid = ?";
+
+    public final static String SQL_FIND_RECORD_BY_ID = "SELECT * FROM RECORD WHERE RECORDID = ?";
 
     public final static String SQL_FIND_ALL_RECORDS = "SELECT * FROM record";
 
@@ -40,14 +46,25 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     
     @Override
-    public Integer create(Integer employeeId, Integer departmentId, Date date, boolean present, boolean onsite,
+    public Record create(Integer employeeId, Integer departmentId, Date date, boolean present, boolean onsite,
             boolean doneSyncUpCall) throws InvalidRequestException {
         try {
             System.out.println("Repository Record Create");
-            return jdbcTemplate.update(SQL_CREATE_RECORD, new Object[] { employeeId, departmentId, date, present, onsite,
-                    doneSyncUpCall });
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            namedParameterJdbcTemplate.update(SQL_CREATE_RECORD,
+                    new MapSqlParameterSource("employeeId", employeeId).addValue("departmentId", departmentId)
+                            .addValue("date", date).addValue("present", present).addValue("onsite", onsite)
+                            .addValue("doneSyncUpCall", doneSyncUpCall),
+                    keyHolder);
+            Integer recordId = (Integer) keyHolder.getKeys().get("recordid");
+            System.out.println("Repository Record Created "+recordId);
+            return findById(recordId);
+            
         } catch (Exception e) {
             System.out.println(e.getMessage());
             if (e.getMessage().contains("Duplicate"))
@@ -106,19 +123,19 @@ public class RecordRepositoryImpl implements RecordRepository {
     //Use This
     private RowMapper<Record> recordRowMapper = ((rs, rowNum) -> {
         return new Record(rs.getInt("RECORDID"), rs.getInt("EMPLOYEEID"), rs.getInt("DEPARTMENTID"),
-                rs.getDate("DATE"), rs.getBoolean("PRESENT"), rs.getBoolean("ONSITE"),
+                rs.getDate("RECORDDATE"), rs.getBoolean("PRESENT"), rs.getBoolean("ONSITE"),
                 rs.getBoolean("DONESYNCUPCALL"));
     });
 
     private RowMapper<Map<String,Object>> recordByDepartmentIdRowMapper = ((rs, rowNum) -> {
         return Map.of("recordId",rs.getInt("RECORDID"),"employeeId",rs.getInt("EMPLOYEEID"),"departmentId",rs.getInt("DEPARTMENTID"),
-                "date",rs.getDate("DATE"),"present",rs.getBoolean("PRESENT"),"onSite",rs.getBoolean("ONSITE"),
+                "date",rs.getDate("RECORDDATE"),"present",rs.getBoolean("PRESENT"),"onSite",rs.getBoolean("ONSITE"),
                 "doneSyncUpCall",rs.getBoolean("DONESYNCUPCALL"));
     });
 
     private RowMapper<Map<String,Object>> recordByDateWithEmployeeInfoRowMapper = ((rs, rowNum) -> {
         return Map.of("recordId",rs.getInt("RECORDID"),"employeeId",rs.getInt("EMPLOYEEID"),"departmentId",rs.getInt("DEPARTMENTID"),
-                "date",rs.getDate("DATE"),"present",rs.getBoolean("PRESENT"),"onSite",rs.getBoolean("ONSITE"),
+                "date",rs.getDate("RECORDDATE"),"present",rs.getBoolean("PRESENT"),"onSite",rs.getBoolean("ONSITE"),
                 "doneSyncUpCall",rs.getBoolean("DONESYNCUPCALL"),"employeeName",rs.getString("EMPLOYEENAME"));
     });
 
@@ -128,15 +145,15 @@ public class RecordRepositoryImpl implements RecordRepository {
 
 
     @Override
-    public Record findById(Integer recordId) throws InvalidRequestException {
-        try {
-            System.out.println("Record Repo Find by Id");
-            return jdbcTemplate.queryForObject(SQL_FIND_ALL_RECORDS, recordRowMapper, recordId);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new InvalidRequestException("Invalid request");
-        }
+public Record findById(Integer recordId) throws InvalidRequestException {
+    try {
+        System.out.println("Record Repo Find by Id " + recordId);
+        return jdbcTemplate.queryForObject(SQL_FIND_RECORD_BY_ID, recordRowMapper,new Object[] { recordId });
+    } catch (Exception e) {
+        System.out.println(e.getMessage());
+        throw new InvalidRequestException("Invalid request");
     }
+}
 
     @Override
     public List<Map<String,Object>> findAll() throws InvalidRequestException {

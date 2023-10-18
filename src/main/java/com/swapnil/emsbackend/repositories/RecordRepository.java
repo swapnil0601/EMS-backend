@@ -8,7 +8,9 @@ import java.sql.Date;
 import java.util.Map;
 import java.util.List;
 public interface RecordRepository {
-    Integer create(Integer employeeId,Integer departmentId,Date date,boolean present,boolean onsite,boolean doneSyncUpCall) throws InvalidRequestException;
+    Record create(Integer employeeId,Integer departmentId,Date date,boolean present,boolean onsite,boolean doneSyncUpCall) throws InvalidRequestException;
+    
+    Record findById(Integer recordId) throws InvalidRequestException;
 
     Integer createDefault(Integer employeeId,Integer departmentId,Date date) throws InvalidRequestException;
 
@@ -20,7 +22,6 @@ public interface RecordRepository {
 
     List<Map<String,Object>> findAllByDate(Date date) throws InvalidRequestException;
 
-    Record findById(Integer recordId) throws InvalidRequestException;
 
     List<Map<String,Object>> findAllByEmployeeId(Integer employeeId) throws InvalidRequestException;
 

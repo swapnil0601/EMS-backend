@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.swapnil.emsbackend.exceptions.AuthException;
 import com.swapnil.emsbackend.models.Account;
 import com.swapnil.emsbackend.repositories.AccountRepository;
-import com.swapnil.emsbackend.repositories.EmployeeRepository;
 import com.swapnil.emsbackend.services.AccountService;
 
 @Service
@@ -17,19 +16,13 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     AccountRepository accountRepository;
 
-    // @Autowired
-    // AdminRepository adminRepository;
-
-    @Autowired
-    EmployeeRepository employeeRepository;
-
     @Override
     public Account getAccountById(Integer accountId) {
         return accountRepository.findById(accountId);
     }
 
     @Override
-    public Account registerAccount(String firstName, String lastName, String email, String password, String role) throws AuthException{
+    public Account register(String firstName, String lastName, String email, String password, String role) throws AuthException{
 
         Pattern pattern = Pattern.compile("^(.+)@(.+)$");
 
@@ -46,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account validateAccount(String email, String password) throws AuthException {
+    public Account login(String email, String password) throws AuthException {
         if(email != null) email = email.toLowerCase();
 
         try{
@@ -59,9 +52,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account updateAccount(Integer accountId, Account account) throws AuthException {
+    public Account update(Integer accountId, Account account) throws AuthException {
         try{
-            accountRepository.updateAccount(accountId, account);
+            accountRepository.update(accountId, account);
             return accountRepository.findById(accountId);
         }catch(Exception e){
             throw new AuthException("Invalid details. Failed to update account");
