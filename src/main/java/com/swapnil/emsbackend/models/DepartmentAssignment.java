@@ -16,10 +16,10 @@ public class DepartmentAssignment {
         this.assignmentDate = assignmentDate;
     }
 
-    public int getEnrollmentId() {
+    public int getAssignmentId() {
         return assignmentId;
     }
-    public void setEnrollmentId(int assignmentId) {
+    public void setAssignmentId(int assignmentId) {
         this.assignmentId = assignmentId;
     }
     public int getDepartmentId() {

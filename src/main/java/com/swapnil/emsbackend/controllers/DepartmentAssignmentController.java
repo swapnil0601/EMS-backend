@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,32 @@ public class DepartmentAssignmentController {
     
     @Autowired
     DepartmentAssignmentService departmentAssignmentService;
+
+    @GetMapping("/getAssignmentInfo")
+    public ResponseEntity<Map<String,Object>> getAssignmentInfo(HttpServletRequest request){
+        Map<String,Object> returnObj = new HashMap<>();
+        try{
+            returnObj.put("data", departmentAssignmentService.getAssignmentInfo());
+            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
+        }
+        catch(Exception e){
+            returnObj.put("error",e.getMessage());
+            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getUnassignedEmployees")
+    public ResponseEntity<Map<String,Object>> getUnassignedEmployees(HttpServletRequest request){
+        Map<String,Object> returnObj = new HashMap<>();
+        try{
+            returnObj.put("data", departmentAssignmentService.getUnassignedEmployees());
+            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
+        }
+        catch(Exception e){
+            returnObj.put("error",e.getMessage());
+            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @PostMapping("/assignEmployee")
     public ResponseEntity<Map<String,Object>> assignEmployeeToDepartment(HttpServletRequest request, @RequestBody Map<String,Object> departmentAssignmentMap){
@@ -43,9 +70,19 @@ public class DepartmentAssignmentController {
             Integer departmentId = (Integer) departmentAssignmentMap.get("departmentId");
             Integer employeeId = (Integer) departmentAssignmentMap.get("employeeId");
             
-            DepartmentAssignment newAssignment = departmentAssignmentService.addDepartmentAssignment(employeeId, departmentId);
+            // Check if the employee is already assigned to a department
+            DepartmentAssignment existingAssignment = departmentAssignmentService.getDepartmentAssignmentByEmployeeId(employeeId);
+            if (existingAssignment != null) {
+                // Update the existing assignment with the new department and assignment date
+                existingAssignment.setDepartmentId(departmentId);
+                DepartmentAssignment updatedAssignment = departmentAssignmentService.updateDepartmentAssignment(existingAssignment);
+                returnObj.put("data", updatedAssignment);
+            } else {
+                // Create a new assignment if the employee is not assigned to any department
+                DepartmentAssignment newAssignment = departmentAssignmentService.addDepartmentAssignment(employeeId, departmentId);
+                returnObj.put("data", newAssignment);
+            }
 
-            returnObj.put("data", newAssignment);
             return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){

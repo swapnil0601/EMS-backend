@@ -57,7 +57,7 @@ public class Record {
         this.date = date;
     }
 
-    public boolean isPresent() {
+    public boolean getPresent() {
         return present;
     }
 
@@ -65,7 +65,7 @@ public class Record {
         this.present = present;
     }
 
-    public boolean isOnSite() {
+    public boolean getOnSite() {
         return onSite;
     }
 
@@ -73,7 +73,7 @@ public class Record {
         this.onSite = onSite;
     }
 
-    public boolean isDoneSyncUpCall() {
+    public boolean getDoneSyncUpCall() {
         return doneSyncUpCall;
     }
 

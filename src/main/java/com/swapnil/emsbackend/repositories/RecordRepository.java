@@ -16,7 +16,7 @@ public interface RecordRepository {
 
     Integer createDefaultForAllEmployees(Date date) throws InvalidRequestException;
 
-    Record getRecordByEmployeeIdDate(Integer employeeId,Date date) throws InvalidRequestException;
+    Record findRecordByEmployeeIdDate(Integer employeeId,Date date) throws InvalidRequestException;
 
     List<Map<String,Object>> findAll() throws InvalidRequestException;
 
@@ -29,5 +29,5 @@ public interface RecordRepository {
 
     List<Date> fetchOnSiteForEmployeeId(Integer employeeId) throws InvalidRequestException;
 
-    Integer update(Integer recordId,Integer employeeId,Integer departmentId,Date date,boolean present,boolean onsite,boolean doneSyncUpCall) throws InvalidRequestException;
+    Integer update(Integer recordId,boolean present,boolean onsite,boolean doneSyncUpCall) throws InvalidRequestException;
 }

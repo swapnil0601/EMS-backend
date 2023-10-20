@@ -70,6 +70,17 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
+    public Record getRecordByEmployeeIdDate(Integer employeeId, Date date) throws NotFoundException{
+        try{
+            System.out.println("Service Layer: Get Record By Employee Id Date "+employeeId+" "+date);
+            return recordRepository.findRecordByEmployeeIdDate(employeeId, date);
+        }
+        catch(Exception e){
+            throw new NotFoundException("Record not found");
+        }
+    }
+
+    @Override
     public List<Map<String,Object>> getAllRecordsByDate(Date date) throws NotFoundException{
         try{
             return recordRepository.findAllByDate(date);
@@ -131,11 +142,9 @@ public class RecordServiceImpl implements RecordService{
     }
 
     @Override
-    public Record updateRecord(Integer recordId, Integer employeeId, Integer departmentId, String date, boolean present,
-            boolean onsite, boolean doneSyncUpCall) throws NotFoundException{
+    public Record updateRecord(Record record) throws NotFoundException{
         try{
-            Date currentDate = new Date(System.currentTimeMillis());
-            recordRepository.update(recordId, employeeId, departmentId, currentDate, present, onsite, doneSyncUpCall);
+            int recordId = recordRepository.update(record.getRecordId(), record.getPresent(), record.getOnSite(), record.getDoneSyncUpCall());
             return recordRepository.findById(recordId);
         }
         catch(Exception e){

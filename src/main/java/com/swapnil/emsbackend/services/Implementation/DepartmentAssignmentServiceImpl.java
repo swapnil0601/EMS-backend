@@ -1,10 +1,13 @@
 package com.swapnil.emsbackend.services.Implementation;
 
 import java.sql.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.swapnil.emsbackend.exceptions.InvalidRequestException;
 import com.swapnil.emsbackend.exceptions.NotFoundException;
 import com.swapnil.emsbackend.models.DepartmentAssignment;
 import com.swapnil.emsbackend.repositories.DepartmentAssignmentRepository;
@@ -36,14 +39,53 @@ public class DepartmentAssignmentServiceImpl implements DepartmentAssignmentServ
     }
 
     @Override
+    public List<Map<String,Object>> getAssignmentInfo() throws InvalidRequestException {
+        try{
+            return departmentAssignmentRepository.findAssignmentInfo();
+        }
+        catch(Exception e){
+            throw new InvalidRequestException("Invalid request");
+        }
+    }
+
+    @Override
+    public List<Map<String,Object>> getUnassignedEmployees() throws InvalidRequestException {
+        try{
+            return departmentAssignmentRepository.findUnassignedEmployees();
+        }
+        catch(Exception e){
+            throw new InvalidRequestException("Invalid request");
+        }
+    }
+
+    @Override
+    public DepartmentAssignment getDepartmentAssignmentByEmployeeId(Integer employeeId) throws NotFoundException {
+        try{
+            return departmentAssignmentRepository.findAssignmentByEmployeeId(employeeId);
+        }
+        catch(Exception e){
+            throw new NotFoundException("Department Assignment not found");
+        }
+    }
+
+    @Override
+    public DepartmentAssignment updateDepartmentAssignment(DepartmentAssignment departmentAssignment)
+            throws InvalidRequestException {
+        try{
+            Date currentDate = new Date(System.currentTimeMillis());
+            int assignmentId=departmentAssignmentRepository.update(departmentAssignment.getAssignmentId(),departmentAssignment.getDepartmentId(),departmentAssignment.getEmployeeId(), currentDate);
+            return departmentAssignmentRepository.findById(assignmentId);
+        }
+        catch(Exception e){
+            throw new InvalidRequestException("Invalid request");
+        }
+    }
+
+    @Override
     public DepartmentAssignment addDepartmentAssignment(Integer employeeId, Integer departmentId) {
        try{
             Date currentDate = new Date(System.currentTimeMillis());
-            int assignmentId=departmentAssignmentRepository.findIdByEmployeeIdDepartmentId(employeeId, departmentId);
-            System.out.println("assignmentId: "+assignmentId);
-            if(assignmentId==-1){
-                assignmentId=departmentAssignmentRepository.create(employeeId, departmentId, currentDate);
-            }
+            int assignmentId=departmentAssignmentRepository.create(employeeId, departmentId, currentDate);
             return departmentAssignmentRepository.findById(assignmentId);
        }
          catch(Exception e){

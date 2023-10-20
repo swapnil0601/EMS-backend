@@ -15,6 +15,7 @@ public interface RecordService {
 
     List<Map<String,Object>> createDefaultRecordForAllEmployees(Date date) throws NotFoundException;
 
+    Record getRecordByEmployeeIdDate(Integer employeeId, Date date) throws NotFoundException;
 
     Record getRecordById(Integer recordId) throws NotFoundException;
 
@@ -31,7 +32,6 @@ public interface RecordService {
     List<Date> getPresentDatesOfEmployeeByDepartment(Integer employeeId, Integer departmentId)
             throws NotFoundException;
 
-    Record updateRecord(Integer recordId, Integer employeeId, Integer departmentId, String date, boolean present,
-            boolean onsite, boolean doneSyncUpCall) throws NotFoundException;
+    Record updateRecord(Record record) throws NotFoundException;
 
 }

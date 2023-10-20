@@ -28,8 +28,6 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     public final static String SQL_CREATE_DEFAULT_RECORD_FOR_ALL_EMPLOYEES = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) SELECT employee.employeeid,employee.departmentid,?,false,false,false FROM employee";
 
-    public final static String SQL_UPDATE_RECORD = "UPDATE record SET employeeid = ?,departmentid = ?,date = ?,present = ?,onsite = ?,donesyncupcall = ? WHERE recordid = ?";
-
     public final static String SQL_FIND_RECORD_BY_ID = "SELECT * FROM RECORD WHERE RECORDID = ?";
 
     public final static String SQL_FIND_ALL_RECORDS = "SELECT * FROM record";
@@ -44,6 +42,8 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     public final static String SQL_FETCH_ON_SITE_FOR_EMPLOYEE_ID = "SELECT date FROM record WHERE employeeid = ? AND onsite = true";
 
+    public final static String SQL_UPDATE_RECORD_BY_ID = "UPDATE record SET present = ?,onsite = ?,donesyncupcall = ? WHERE recordid = ?";
+
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -54,7 +54,6 @@ public class RecordRepositoryImpl implements RecordRepository {
     public Record create(Integer employeeId, Integer departmentId, Date date, boolean present, boolean onsite,
             boolean doneSyncUpCall) throws InvalidRequestException {
         try {
-            System.out.println("Repository Record Create");
             KeyHolder keyHolder = new GeneratedKeyHolder();
             namedParameterJdbcTemplate.update(SQL_CREATE_RECORD,
                     new MapSqlParameterSource("employeeId", employeeId).addValue("departmentId", departmentId)
@@ -62,11 +61,9 @@ public class RecordRepositoryImpl implements RecordRepository {
                             .addValue("doneSyncUpCall", doneSyncUpCall),
                     keyHolder);
             Integer recordId = (Integer) keyHolder.getKeys().get("recordid");
-            System.out.println("Repository Record Created "+recordId);
             return findById(recordId);
             
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             if (e.getMessage().contains("Duplicate"))
                 throw new InvalidRequestException("Attendance already marked");
             else if (e.getMessage().contains("foreign key"))
@@ -78,12 +75,11 @@ public class RecordRepositoryImpl implements RecordRepository {
     }
 
     @Override
-    public Record getRecordByEmployeeIdDate(Integer employeeId, Date date) throws InvalidRequestException {
+    public Record findRecordByEmployeeIdDate(Integer employeeId, Date date) throws InvalidRequestException {
         try {
             return jdbcTemplate.queryForObject(SQL_FIND_BY_EMPLOYEEID_DATE, recordRowMapper, new Object[]{employeeId,date});
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new InvalidRequestException("Invalid request");
+            return null;
         }
     }
 
@@ -147,7 +143,6 @@ public class RecordRepositoryImpl implements RecordRepository {
     @Override
 public Record findById(Integer recordId) throws InvalidRequestException {
     try {
-        System.out.println("Record Repo Find by Id " + recordId);
         return jdbcTemplate.queryForObject(SQL_FIND_RECORD_BY_ID, recordRowMapper,new Object[] { recordId });
     } catch (Exception e) {
         System.out.println(e.getMessage());
@@ -206,10 +201,11 @@ public Record findById(Integer recordId) throws InvalidRequestException {
     }
 
     @Override
-    public Integer update(Integer recordId, Integer employeeId, Integer departmentId, Date date, boolean present,
+    public Integer update(Integer recordId, boolean present,
             boolean onsite, boolean doneSyncUpCall) throws InvalidRequestException {
         try {
-            return jdbcTemplate.update(SQL_UPDATE_RECORD,employeeId,departmentId,date,present,onsite,doneSyncUpCall,recordId);
+             jdbcTemplate.update(SQL_UPDATE_RECORD_BY_ID,new Object[]{present,onsite,doneSyncUpCall,recordId});
+             return recordId;
         } catch (Exception e) {
             System.out.println(e.getMessage());
             if (e.getMessage().contains("Duplicate"))

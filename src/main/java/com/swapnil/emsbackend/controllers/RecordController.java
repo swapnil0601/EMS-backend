@@ -39,7 +39,6 @@ public class RecordController {
 
         String token = (String) map.get("token");
         Map<String, Object> tokenMap = Constants.validateToken(token);
-        System.out.println(tokenMap);
 
         if (tokenMap.get("valid") == (Boolean) false) {
             returnObj.put("error", "invalid token");
@@ -48,22 +47,29 @@ public class RecordController {
             returnObj.put("error", "unauthorized access");
             return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
         }
-        System.out.println(map);
 
         try{
             String dateString = map.get("date").toString();
             LocalDate localDate = LocalDate.parse(dateString);
             Date date = Date.valueOf(localDate);
-//            System.out.println("Record Controller "+date);
             Integer employeeId = (Integer) map.get("employeeId");
             Integer departmentId = departmentAssignmentService.getDepartmentIdFromEmployeeId(employeeId);
-            System.out.println("Controller " + departmentId);
             Boolean present = (Boolean) map.get("present");
             Boolean onsite = (Boolean) map.get("onSite");
             Boolean doneSyncUpCall = (Boolean) map.get("doneSyncUpCall");
 
-            Record newRecord = recordService.addRecord(employeeId, departmentId, date, present, onsite, doneSyncUpCall);
-            System.out.println("Controller Record Created");
+            Record existingRecord = recordService.getRecordByEmployeeIdDate(employeeId, date);
+
+            Record newRecord;
+            if(existingRecord!=null){
+                existingRecord.setPresent(present);
+                existingRecord.setOnSite(onsite);
+                existingRecord.setDoneSyncUpCall(doneSyncUpCall);
+                newRecord = recordService.updateRecord(existingRecord);
+            }
+            else{
+                newRecord = recordService.addRecord(employeeId, departmentId, date, present, onsite, doneSyncUpCall);
+            }
             returnObj.put("data", newRecord);
             return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
         }
