@@ -12,22 +12,17 @@ public interface RecordRepository {
     
     Record findById(Integer recordId) throws InvalidRequestException;
 
-    Integer createDefault(Integer employeeId,Integer departmentId,Date date) throws InvalidRequestException;
-
-    Integer createDefaultForAllEmployees(Date date) throws InvalidRequestException;
-
     Record findRecordByEmployeeIdDate(Integer employeeId,Date date) throws InvalidRequestException;
 
     List<Map<String,Object>> findAll() throws InvalidRequestException;
 
     List<Map<String,Object>> findAllByDate(Date date) throws InvalidRequestException;
 
-
     List<Map<String,Object>> findAllByEmployeeId(Integer employeeId) throws InvalidRequestException;
 
-    List<Date> fetchPresentForEmployeeId(Integer employeeId) throws InvalidRequestException;
+    List<Map<String,Object>> fetchLast30DaysPresentCount() throws InvalidRequestException;
 
-    List<Date> fetchOnSiteForEmployeeId(Integer employeeId) throws InvalidRequestException;
+    List<Map<String,Object>> fetchLast30DaysReports() throws InvalidRequestException;
 
     Integer update(Integer recordId,boolean present,boolean onsite,boolean doneSyncUpCall) throws InvalidRequestException;
 }

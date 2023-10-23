@@ -44,7 +44,7 @@ public class AccountController {
 
         Account account = accountService.register(firstName, lastName, email, password, role);
         
-        Employee employee = employeeService.addEmployee(account.getAccountId());
+        Employee employee = employeeService.add(account.getAccountId());
 
         Map<String, Object> accountResponse = new HashMap<>();
         Map<String, Object> accRes = new HashMap<>();
@@ -65,9 +65,8 @@ public class AccountController {
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, Object> accountMap){
         String email = (String) accountMap.get("email");
         String password = (String) accountMap.get("password");
-        System.out.println(email+" "+password);
         Account account = accountService.login(email, password);
-        Employee employee = employeeService.getEmployeeById(account.getAccountId());
+        Employee employee = employeeService.getById(account.getAccountId());
         Map<String, Object> accountResponse = new HashMap<>();
         accountResponse.put("accountId", account.getAccountId());
         accountResponse.put("firstName", account.getFirstName());

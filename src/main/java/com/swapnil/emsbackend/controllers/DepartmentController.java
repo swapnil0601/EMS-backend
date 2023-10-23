@@ -31,7 +31,7 @@ public class DepartmentController {
     public ResponseEntity<Map<String,Object>> getAllDepartments(){
         Map<String,Object> returnObj = new HashMap<>();
         try{
-            returnObj.put("data",departmentService.getAllDepartments());
+            returnObj.put("data",departmentService.getAll());
             return new ResponseEntity<>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){
@@ -44,7 +44,7 @@ public class DepartmentController {
     public ResponseEntity<Map<String,Object>> getDepartmentById(HttpServletRequest request, @PathVariable("departmentId") int departmentId){
         Map<String,Object> returnObj = new HashMap<>();
         try{
-            returnObj.put("data",departmentService.getDepartmentById(departmentId));
+            returnObj.put("data",departmentService.getById(departmentId));
             return new ResponseEntity<>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){
@@ -71,7 +71,7 @@ public class DepartmentController {
         try{
             String departmentName = (String) departmentMap.get("departmentName");
             System.out.println(departmentName);
-            returnObj.put("data",departmentService.addDepartment(departmentName));
+            returnObj.put("data",departmentService.add(departmentName));
             return new ResponseEntity<Map<String, Object>>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){
@@ -97,7 +97,7 @@ public class DepartmentController {
             try{
                 String departmentName = (String) departmentMap.get("departmentName");
                 Department department = new Department(departmentId,departmentName);
-                returnObj.put("data",departmentService.updateDepartment(departmentId,department));
+                returnObj.put("data",departmentService.update(departmentId,department));
                 return new ResponseEntity<Map<String, Object>>(returnObj,HttpStatus.OK);
             }
             catch(Exception e){
@@ -121,7 +121,7 @@ public class DepartmentController {
             }
 
             try{
-                departmentService.deleteDepartment(departmentId);
+                departmentService.delete(departmentId);
                 returnObj.put("success",true);
                 return new ResponseEntity<Map<String, Object>>(returnObj,HttpStatus.OK);
             }

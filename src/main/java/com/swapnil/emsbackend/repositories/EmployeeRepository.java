@@ -15,7 +15,7 @@ public interface EmployeeRepository {
 
     Employee findById(Integer employeeId) throws NotFoundException;
 
-    Integer getEmployeeIdFromAccountId(Integer accountId) throws NotFoundException;
+    Integer findIdFromAccountId(Integer accountId) throws NotFoundException;
 
     void update(Integer employeeId) throws InvalidRequestException;
 

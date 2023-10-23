@@ -62,7 +62,6 @@ public class AccountRepositoryImpl implements AccountRepository {
     public Account create(String firstName, String lastName, String email, String password, String role) throws AuthException {
 
         Account createdAccount=null;
-        System.out.println("Account Repository Layer "+firstName+" "+lastName+" "+email+" "+password+" "+role);
         String hashPassword = BCrypt.hashpw(password, BCrypt.gensalt(10));
         try{
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -73,7 +72,6 @@ public class AccountRepositoryImpl implements AccountRepository {
             paramMap.put("password", hashPassword);
             paramMap.put("role", role);
             namedParameterJdbcTemplate.update(SQL_ACCOUNT_CREATE, new MapSqlParameterSource(paramMap), keyHolder);
-            System.out.println("Account Created");
             Integer accountId = (Integer) keyHolder.getKeys().get("ACCOUNTID");
             createdAccount = findById(accountId);
         }catch
@@ -102,7 +100,6 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Override
     public Account findByEmailAndPassword(String email, String password) throws AuthException {
         try {
-            System.out.println("Account Repository Layer "+email+" "+password);
             Account account = jdbcTemplate.queryForObject(SQL_ACCOUNT_FIND_BY_EMAIL, accountRowMapperWithPassword,
             new Object[] { email });
             

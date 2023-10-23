@@ -44,7 +44,6 @@ public class AccountServiceImpl implements AccountService {
 
         try{
             Account account = accountRepository.findByEmailAndPassword(email, password);
-            System.out.println("Service Layer " + account);
             return account;
         }catch(Exception e){
             throw new AuthException("Invalid email/password");

@@ -32,7 +32,7 @@ public class EmployeeController {
     {
         Map<String,Object> returnObj = new HashMap<>();
         try{
-            List<Employee> employeeList = employeeService.getAllEmployees();
+            List<Employee> employeeList = employeeService.getAll();
             returnObj.put("data", employeeList) ;
             return new ResponseEntity<Map<String,Object>>(returnObj, HttpStatus.OK);
         }catch (Exception e) {
@@ -45,7 +45,7 @@ public class EmployeeController {
     public ResponseEntity<Map<String,Object>> getEmployeeById(HttpServletRequest request,@PathVariable Integer employeeId){
         Map<String,Object> returnObj = new HashMap<>();
         try{
-            Employee employee = employeeService.getEmployeeById(employeeId);
+            Employee employee = employeeService.getById(employeeId);
             returnObj.put("data", employee);
             return new ResponseEntity<Map<String,Object>>(returnObj, HttpStatus.OK);
         } catch (Exception e) {
@@ -71,7 +71,7 @@ public class EmployeeController {
         }
 
         try{
-            employeeService.deleteEmployee(employeeId);
+            employeeService.delete(employeeId);
             returnObj.put("success", true);
             return new ResponseEntity<>(returnObj, HttpStatus.OK);
         } catch (Exception e) {

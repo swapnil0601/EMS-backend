@@ -24,10 +24,6 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     public final static String SQL_CREATE_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (:employeeId,:departmentId,:date,:present,:onsite,:doneSyncUpCall)";
 
-    public final static String SQL_CREATE_DEFAULT_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (?,?,?,false,false,false)";
-
-    public final static String SQL_CREATE_DEFAULT_RECORD_FOR_ALL_EMPLOYEES = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) SELECT employee.employeeid,employee.departmentid,?,false,false,false FROM employee";
-
     public final static String SQL_FIND_RECORD_BY_ID = "SELECT * FROM RECORD WHERE RECORDID = ?";
 
     public final static String SQL_FIND_ALL_RECORDS = "SELECT * FROM record";
@@ -41,6 +37,10 @@ public class RecordRepositoryImpl implements RecordRepository {
     public final static String SQL_FETCH_PRESENT_FOR_EMPLOYEE_ID = "SELECT date FROM record WHERE employeeid = ? AND present = true";
 
     public final static String SQL_FETCH_ON_SITE_FOR_EMPLOYEE_ID = "SELECT date FROM record WHERE employeeid = ? AND onsite = true";
+
+    public final static String SQL_FETCH_LAST_30_DAYS_PRESENT_COUNT = "Select ad.date, COUNT(r.present) as employeespresent from (SELECT generate_series(current_date - interval '30 days', current_date, interval '1 day')::date as date) ad left join record r on ad.date=r.recorddate and r.present=true group by ad.date order by ad.date;";
+
+    public final static String SQL_LAST_30_DAYS_REPORT = "select a.firstname || ' ' || a.lastname AS name, COUNT(DISTINCT CASE WHEN r.present THEN ad.date END) AS present, COUNT(DISTINCT CASE WHEN r.onsite THEN ad.date END) AS onsite,COUNT(DISTINCT CASE WHEN r.donesyncupcall THEN ad.date END) AS donesyncupcall from ( select generate_series(current_date - interval '30 days',current_date,interval '1 day')::date as date) ad cross join account a left join employee e on a.accountid = e.accountid left join Record r ON ad.date = r.recorddate AND r.employeeid = e.employeeid GROUP BY a.firstname, a.lastname ORDER BY a.firstname, a.lastname";
 
     public final static String SQL_UPDATE_RECORD_BY_ID = "UPDATE record SET present = ?,onsite = ?,donesyncupcall = ? WHERE recordid = ?";
 
@@ -83,44 +83,16 @@ public class RecordRepositoryImpl implements RecordRepository {
         }
     }
 
-
-    @Override
-    public Integer createDefault(Integer employeeId, Integer departmentId, Date date) throws InvalidRequestException {
-        try {
-            return jdbcTemplate.update(SQL_CREATE_DEFAULT_RECORD, new Object[] { employeeId, departmentId, date });
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            if (e.getMessage().contains("Duplicate"))
-                throw new InvalidRequestException("Attendance already marked");
-            else if (e.getMessage().contains("foreign key"))
-                throw new InvalidRequestException(
-                        "Either Employee and/or Department does not exist . Or Employee is not assigned to the department.");
-            else
-                throw new InvalidRequestException("Invalid request");
-        }
-    }
-
-    @Override
-    public Integer createDefaultForAllEmployees(Date date) throws InvalidRequestException {
-        try {
-            return jdbcTemplate.update(SQL_CREATE_DEFAULT_RECORD_FOR_ALL_EMPLOYEES,new Object[]{date});
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            if (e.getMessage().contains("Duplicate"))
-                throw new InvalidRequestException("Attendance already marked");
-            else if (e.getMessage().contains("foreign key"))
-                throw new InvalidRequestException(
-                        "Either Employee and/or Department does not exist . Or Employee is not assigned to the department.");
-            else
-                throw new InvalidRequestException("Invalid request");
-        }
-    }
-
-    //Use This
     private RowMapper<Record> recordRowMapper = ((rs, rowNum) -> {
         return new Record(rs.getInt("RECORDID"), rs.getInt("EMPLOYEEID"), rs.getInt("DEPARTMENTID"),
                 rs.getDate("RECORDDATE"), rs.getBoolean("PRESENT"), rs.getBoolean("ONSITE"),
                 rs.getBoolean("DONESYNCUPCALL"));
+    });
+
+
+
+    private RowMapper<Map<String,Object>> reportRowMapper = ((rs, rowNum) -> {
+        return Map.of("name",rs.getString("name"),"present",rs.getInt("present"),"onsite",rs.getInt("onsite"),"donesyncupcall",rs.getInt("donesyncupcall")); 
     });
 
     private RowMapper<Map<String,Object>> recordByDepartmentIdRowMapper = ((rs, rowNum) -> {
@@ -135,13 +107,12 @@ public class RecordRepositoryImpl implements RecordRepository {
                 "doneSyncUpCall",rs.getBoolean("DONESYNCUPCALL"),"employeeName",rs.getString("EMPLOYEENAME"));
     });
 
-    private RowMapper<Date> dateRowMapper = ((rs, rowNum) -> {
-        return rs.getDate("DATE");
+    private RowMapper<Map<String,Object>> recordByDateRowMapper = ((rs, rowNum) -> {
+        return Map.of("date",rs.getDate("date"),"employeesPresent",rs.getInt("employeespresent"));
     });
 
-
     @Override
-public Record findById(Integer recordId) throws InvalidRequestException {
+    public Record findById(Integer recordId) throws InvalidRequestException {
     try {
         return jdbcTemplate.queryForObject(SQL_FIND_RECORD_BY_ID, recordRowMapper,new Object[] { recordId });
     } catch (Exception e) {
@@ -181,9 +152,9 @@ public Record findById(Integer recordId) throws InvalidRequestException {
     }
 
     @Override
-    public List<Date> fetchPresentForEmployeeId(Integer employeeId) throws InvalidRequestException {
+    public List<Map<String,Object>> fetchLast30DaysPresentCount() throws InvalidRequestException {
         try {
-            return jdbcTemplate.query(SQL_FETCH_PRESENT_FOR_EMPLOYEE_ID,dateRowMapper,employeeId);
+            return jdbcTemplate.query(SQL_FETCH_LAST_30_DAYS_PRESENT_COUNT,recordByDateRowMapper);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new InvalidRequestException("Invalid request");
@@ -191,9 +162,9 @@ public Record findById(Integer recordId) throws InvalidRequestException {
     }
 
     @Override
-    public List<Date> fetchOnSiteForEmployeeId(Integer employeeId) throws InvalidRequestException {
+    public List<Map<String,Object>> fetchLast30DaysReports() throws InvalidRequestException {
         try {
-            return jdbcTemplate.query(SQL_FETCH_ON_SITE_FOR_EMPLOYEE_ID,dateRowMapper,employeeId);
+            return jdbcTemplate.query(SQL_LAST_30_DAYS_REPORT,reportRowMapper);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new InvalidRequestException("Invalid request");

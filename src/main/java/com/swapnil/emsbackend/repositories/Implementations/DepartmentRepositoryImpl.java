@@ -5,7 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import com.swapnil.emsbackend.exceptions.InvalidRequestException;
 import com.swapnil.emsbackend.models.Department;
@@ -16,8 +21,8 @@ import com.swapnil.emsbackend.repositories.DepartmentRepository;
 public class DepartmentRepositoryImpl implements DepartmentRepository {
     
 
-    private static final String SQL_DEPARTMENT_CREATE = "INSERT INTO DEPARTMENT(DEPARTMENTNAME) VALUES(?);";
-    private static final String SQL_ID_FROM_DEPARTMENTNAME = "SELECT DEPARTMENTID FROM DEPARTMENT WHERE DEPARTMENTNAME = ?;";
+    private static final String SQL_DEPARTMENT_CREATE = "INSERT INTO DEPARTMENT(DEPARTMENTNAME) VALUES(:departmentName);";
+
     private static final String SQL_FIND_ALL_DEPARTMENT = "SELECT * FROM DEPARTMENT;";
 
     private static final String SQL_FIND_DEPARTMENT_BY_ID = "SELECT * FROM DEPARTMENT WHERE DEPARTMENTID = ?;";
@@ -32,17 +37,16 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
     private RowMapper<Department> departmentRowMapper = ((rs, rowNum) -> {
         return new Department(rs.getInt("DEPARTMENTID"), rs.getString("DEPARTMENTNAME"));
     });
 
-    private RowMapper<Integer> departmentIdRowMapper = ((rs, rowNum) -> {
-        return rs.getInt("DEPARTMENTID");
-    });
-
     private RowMapper<Employee> assignedEmployeesRowMapper = ((rs, rowNum) -> {
         return new Employee(
-            rs.getInt("USERID"),
+            rs.getInt("ACCOUNTID"),
             rs.getString("FIRSTNAME"),
             rs.getString("LASTNAME"),
             rs.getString("EMAIL"),
@@ -54,8 +58,10 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
     @Override
     public Integer create(String departmentName) throws InvalidRequestException {
         try{
-            jdbcTemplate.update(SQL_DEPARTMENT_CREATE, new Object[] { departmentName });
-            return jdbcTemplate.queryForObject(SQL_ID_FROM_DEPARTMENTNAME,departmentIdRowMapper,new Object[] { departmentName });
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            namedParameterJdbcTemplate.update(SQL_DEPARTMENT_CREATE, new MapSqlParameterSource("departmentName",departmentName), keyHolder);
+            Integer departmentId=(Integer) keyHolder.getKeys().get("DEPARTMENTID");
+            return departmentId;
         }
         catch
         (Exception e) {

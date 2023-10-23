@@ -82,7 +82,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository{
     }
 
     @Override
-    public Integer getEmployeeIdFromAccountId(Integer accountId) throws NotFoundException,InvalidRequestException{
+    public Integer findIdFromAccountId(Integer accountId) throws NotFoundException,InvalidRequestException{
         try{
             return jdbcTemplate.queryForObject(SQL_FETCH_EMPLOYEEID_FOR_ACCOUNTID,employeeIdRowMapper,new Object[]{accountId});
         }catch(EmptyResultDataAccessException e){

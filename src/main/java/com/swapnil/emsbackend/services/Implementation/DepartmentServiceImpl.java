@@ -16,8 +16,19 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Autowired
     DepartmentRepository departmentRepository;
 
+   @Override
+    public Department add(String departmentName) throws RuntimeException {
+        try{
+            Integer departmentId = departmentRepository.create(departmentName);
+            return departmentRepository.findById(departmentId);
+        }catch(Exception e){
+            throw new RuntimeException("Failed to add department");
+        }
+    }
+
+
     @Override
-    public List<Department> getAllDepartments() throws RuntimeException {
+    public List<Department> getAll() throws RuntimeException {
         try{
             return departmentRepository.findAll();
         }catch(Exception e){
@@ -26,42 +37,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Department getDepartmentById(Integer departmentId) throws RuntimeException {
+    public Department getById(Integer departmentId) throws RuntimeException {
         try{
             return departmentRepository.findById(departmentId);
         }catch(Exception e){
             throw new RuntimeException("Failed to fetch department by id");
-        }
-    }
-
-    @Override
-    public Department addDepartment(String departmentName) throws RuntimeException {
-        try{
-            System.out.println("Service layer: "+departmentName);
-            Integer departmentId = departmentRepository.create(departmentName);
-            System.out.println("Service layer: "+departmentId);
-            return departmentRepository.findById(departmentId);
-        }catch(Exception e){
-            throw new RuntimeException("Failed to add department");
-        }
-    }
-
-    @Override
-    public Department updateDepartment(Integer departmentId, Department department) throws RuntimeException {
-        try{
-            departmentRepository.update(departmentId, department);
-            return departmentRepository.findById(departmentId);
-        }catch(Exception e){
-            throw new RuntimeException("Failed to update department");
-        }
-    }
-
-    @Override
-    public void deleteDepartment(Integer departmentId) throws RuntimeException {
-        try{
-            departmentRepository.removeById(departmentId);
-        }catch(Exception e){
-            throw new RuntimeException("Failed to delete department");
         }
     }
 
@@ -73,4 +53,27 @@ public class DepartmentServiceImpl implements DepartmentService {
             throw new RuntimeException("Failed to fetch assigned employees");
         }
     }
+
+
+    @Override
+    public Department update(Integer departmentId, Department department) throws RuntimeException {
+        try{
+            departmentRepository.update(departmentId, department);
+            return departmentRepository.findById(departmentId);
+        }catch(Exception e){
+            throw new RuntimeException("Failed to update department");
+        }
+    }
+
+
+    @Override
+    public void delete(Integer departmentId) throws RuntimeException {
+        try{
+            departmentRepository.removeById(departmentId);
+        }catch(Exception e){
+            throw new RuntimeException("Failed to delete department");
+        }
+    }
+
+    
 }

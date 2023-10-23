@@ -11,12 +11,12 @@ public interface DepartmentRepository {
     Integer create(String departmentName) throws InvalidRequestException;
 
     List<Department> findAll();
-
     Department findById(Integer departmentId) throws NotFoundException;
-
     List<Employee> findAssignedEmployees(Integer departmentId) throws InvalidRequestException;
 
     void update(Integer departmentId, Department department) throws InvalidRequestException;
 
     void removeById(Integer departmentId) throws InvalidRequestException;
+    
+    
 }

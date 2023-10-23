@@ -6,15 +6,14 @@ import com.swapnil.emsbackend.models.Department;
 import com.swapnil.emsbackend.models.Employee;
 
 public interface DepartmentService {
-    List<Department> getAllDepartments() throws RuntimeException;
-
-    Department getDepartmentById(Integer departmentId) throws RuntimeException;
-
-    Department addDepartment(String departmentName) throws RuntimeException;
-
-    Department updateDepartment(Integer departmentId, Department department) throws RuntimeException;
-
-    void deleteDepartment(Integer departmentId) throws RuntimeException;
-
+    Department add(String departmentName) throws RuntimeException;
+    
+    List<Department> getAll() throws RuntimeException;
+    Department getById(Integer departmentId) throws RuntimeException;
     List<Employee> getAssignedEmployees(Integer departmentId) throws RuntimeException;
+
+    Department update(Integer departmentId, Department department) throws RuntimeException;
+
+    void delete(Integer departmentId) throws RuntimeException;
+
 }
