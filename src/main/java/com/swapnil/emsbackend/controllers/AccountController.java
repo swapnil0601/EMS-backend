@@ -22,6 +22,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 import com.swapnil.emsbackend.services.AccountService;
+import com.swapnil.emsbackend.services.DepartmentAssignmentService;
 import com.swapnil.emsbackend.Constants;
 
 @RestController
@@ -34,6 +35,9 @@ public class AccountController {
     @Autowired
     EmployeeService employeeService;
 
+    @Autowired
+    DepartmentAssignmentService departmentAssignmentService;
+
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, Object> accountMap){
         String firstName = (String) accountMap.get("firstName");
@@ -41,10 +45,19 @@ public class AccountController {
         String email = (String) accountMap.get("email");
         String password = (String) accountMap.get("password");
         String role = (String) accountMap.get("role");
+        Integer departmentId = (Integer) accountMap.get("departmentid");
 
         Account account = accountService.register(firstName, lastName, email, password, role);
         
         Employee employee = employeeService.add(account.getAccountId());
+
+        try{
+            System.out.println(employee.getEmployeeId()+" "+departmentId);
+            departmentAssignmentService.addDepartmentAssignment(employee.getEmployeeId(), departmentId);
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
 
         Map<String, Object> accountResponse = new HashMap<>();
         Map<String, Object> accRes = new HashMap<>();
@@ -54,6 +67,7 @@ public class AccountController {
         accRes.put("email", account.getEmail());
         accRes.put("role", account.getRole());
         accRes.put("employeeId", employee.getEmployeeId());
+        accRes.put("departmentId", departmentId);
         accountResponse.put("token", generateJWTToken(account, employee));
         accountResponse.put("account", accRes);
 
