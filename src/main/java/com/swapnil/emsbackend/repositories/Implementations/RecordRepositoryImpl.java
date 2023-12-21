@@ -21,7 +21,6 @@ import com.swapnil.emsbackend.repositories.RecordRepository;
 @Repository
 public class RecordRepositoryImpl implements RecordRepository {
 
-
     public final static String SQL_CREATE_RECORD = "INSERT INTO record (employeeid,departmentid,recorddate,present,onsite,donesyncupcall) VALUES (:employeeId,:departmentId,:date,:present,:onsite,:doneSyncUpCall)";
 
     public final static String SQL_FIND_RECORD_BY_ID = "SELECT * FROM RECORD WHERE RECORDID = ?";
@@ -33,10 +32,6 @@ public class RecordRepositoryImpl implements RecordRepository {
     public final static String SQL_FIND_BY_EMPLOYEEID_DATE = "SELECT * FROM record WHERE employeeid = ? AND recorddate = ?";
 
     public final static String SQL_FIND_ALL_RECORDS_BY_DATE_WITH_EMPLOYEE_INFO = "SELECT record.*,employee.employeename FROM record INNER JOIN employee ON record.employeeid = employee.employeeid WHERE recorddate = ?";
-
-    public final static String SQL_FETCH_PRESENT_FOR_EMPLOYEE_ID = "SELECT date FROM record WHERE employeeid = ? AND present = true";
-
-    public final static String SQL_FETCH_ON_SITE_FOR_EMPLOYEE_ID = "SELECT date FROM record WHERE employeeid = ? AND onsite = true";
 
     public final static String SQL_FETCH_LAST_30_DAYS_PRESENT_COUNT = "Select ad.date, COUNT(r.present) as employeespresent from (SELECT generate_series(current_date - interval '30 days', current_date, interval '1 day')::date as date) ad left join record r on ad.date=r.recorddate and r.present=true group by ad.date order by ad.date;";
 
@@ -88,8 +83,6 @@ public class RecordRepositoryImpl implements RecordRepository {
                 rs.getDate("RECORDDATE"), rs.getBoolean("PRESENT"), rs.getBoolean("ONSITE"),
                 rs.getBoolean("DONESYNCUPCALL"));
     });
-
-
 
     private RowMapper<Map<String,Object>> reportRowMapper = ((rs, rowNum) -> {
         return Map.of("name",rs.getString("name"),"present",rs.getInt("present"),"onsite",rs.getInt("onsite"),"donesyncupcall",rs.getInt("donesyncupcall")); 

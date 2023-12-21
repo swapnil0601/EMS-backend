@@ -1,8 +1,11 @@
 package com.swapnil.emsbackend.services.Implementation;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.swapnil.emsbackend.models.Account;
 import com.swapnil.emsbackend.repositories.AdminRepository;
 import com.swapnil.emsbackend.services.AdminService;
 
@@ -11,23 +14,24 @@ public class AdminServiceImpl implements AdminService{
     @Autowired
     AdminRepository adminRepository;
 
+
     @Override
-    public void makeAdmin(Integer userId) {
-        try{
-            adminRepository.assignAdmin(userId);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+    public List<Account> getAll() {
+        return adminRepository.findAll();
     }
 
     @Override
-    public void removeAdmin(Integer userId) {
-        try{
-            adminRepository.removeAdmin(userId);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+    public List<Account> getAllPending() {
+        return adminRepository.findAllPending();
+    }
+
+    @Override
+    public void makeAdmin(Integer accountId) {
+        adminRepository.makeAdmin(accountId);
+    }
+
+    @Override
+    public void declineAdmin(Integer accountId) {
+        adminRepository.declineAdmin(accountId);
     }
 }

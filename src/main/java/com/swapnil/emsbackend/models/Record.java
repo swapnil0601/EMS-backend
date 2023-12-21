@@ -6,7 +6,6 @@ import java.sql.Date;
 public class Record {
     
     private int recordId,employeeId,departmentId;
-
     private Date date;
     private boolean present;
     private boolean onSite;

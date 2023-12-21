@@ -63,7 +63,7 @@ public class Constants {
             }
             map.put("valid", true);
         } catch (Exception e) {
-
+            System.out.println(e.getMessage());
         }
         return map;
     }

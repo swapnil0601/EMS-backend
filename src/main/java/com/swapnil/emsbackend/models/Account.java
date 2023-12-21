@@ -7,26 +7,29 @@ public class Account {
     private String email;
     private String  password;
     private String  role;
+    private Boolean adminRequestPending;
 
     public Account() {
 
     }
 
-    public Account(Integer accountId, String firstName, String lastName, String email, String password, String role) {
+    public Account(Integer accountId, String firstName, String lastName, String email, String password, String role,Boolean adminRequestPending) {
         this.accountId = accountId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.adminRequestPending=adminRequestPending;
     }
 
-    public Account(Integer accountId, String firstName, String lastName, String email, String role) {
+    public Account(Integer accountId, String firstName, String lastName, String email, String role,Boolean adminRequestPending) {
         this.accountId = accountId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = role;
+        this.adminRequestPending=adminRequestPending;
     }
 
     public String getRole() {
@@ -75,6 +78,14 @@ public class Account {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getAdminRequestPending() {
+        return adminRequestPending;
+    }
+
+    public void setAdminRequestPending(Boolean adminRequestPending) {
+        this.adminRequestPending = adminRequestPending;
     }
 
 }

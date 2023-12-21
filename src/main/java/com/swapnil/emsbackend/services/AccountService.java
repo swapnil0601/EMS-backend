@@ -6,7 +6,7 @@ import com.swapnil.emsbackend.models.Account;
 public interface AccountService {
     Account getAccountById(Integer accountId);
     
-    Account register(String firstName, String lastName, String email, String password, String role) throws AuthException;
+    Account register(String firstName, String lastName, String email, String password, String role, Boolean adminRequestPending) throws AuthException;
 
     Account login(String email, String password) throws AuthException;
 

@@ -5,13 +5,13 @@ public class Employee extends Account {
     public Employee() {
     }
 
-    public Employee(Integer accountId, String firstName, String lastName, String email, String password, String role,int employeeId) {
-        super(accountId,firstName, lastName, email, password, role);
+    public Employee(Integer accountId, String firstName, String lastName, String email, String password, String role,Boolean adminRequestPending,int employeeId) {
+        super(accountId,firstName, lastName, email, password, role,adminRequestPending);
         this.employeeId = employeeId;
     }
 
-    public Employee(Integer accountId, String firstName, String lastName, String email, String role,Integer employeeId) {
-        super(accountId,firstName, lastName, email, role);
+    public Employee(Integer accountId, String firstName, String lastName, String email, String role,Boolean adminRequestPending,Integer employeeId) {
+        super(accountId,firstName, lastName, email, role,adminRequestPending);
         this.employeeId = employeeId;
     }
 

@@ -22,7 +22,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account register(String firstName, String lastName, String email, String password, String role) throws AuthException{
+    public Account register(String firstName, String lastName, String email, String password, String role,Boolean adminRequestPending) throws AuthException{
 
         Pattern pattern = Pattern.compile("^(.+)@(.+)$");
 
@@ -32,7 +32,7 @@ public class AccountServiceImpl implements AccountService {
                 throw new AuthException("Invalid email format");
         }
         try{
-            return accountRepository.create(firstName, lastName, email, password, role); 
+            return accountRepository.create(firstName, lastName, email, password, role, adminRequestPending); 
         }catch(Exception e){
             throw new AuthException("Invalid details. Failed to create account");
         }

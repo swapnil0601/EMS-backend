@@ -33,8 +33,7 @@ public class RecordController {
     DepartmentAssignmentService departmentAssignmentService;
 
     @PostMapping("/addrecord")
-    public ResponseEntity<Map<String,Object>> addRecord(HttpServletRequest request,
-            @RequestBody Map<String, Object> map){
+    public ResponseEntity<Map<String,Object>> addRecord(@RequestBody Map<String, Object> map){
         Map<String,Object> returnObj = new HashMap<>();
 
         String token = (String) map.get("token");
@@ -42,10 +41,10 @@ public class RecordController {
 
         if (tokenMap.get("valid") == (Boolean) false) {
             returnObj.put("error", "invalid token");
-            return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(returnObj, HttpStatus.BAD_REQUEST);
         } else if (!tokenMap.get("role").equals("admin")) {
             returnObj.put("error", "unauthorized access");
-            return new ResponseEntity<Map<String, Object>>(returnObj, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(returnObj, HttpStatus.BAD_REQUEST);
         }
 
         try{
@@ -71,96 +70,96 @@ public class RecordController {
                 newRecord = recordService.addRecord(employeeId, departmentId, date, present, onsite, doneSyncUpCall);
             }
             returnObj.put("data", newRecord);
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
+            return new ResponseEntity<>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){
             returnObj.put("error",e.getMessage());
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/{recordId}")
-    public ResponseEntity<Map<String,Object>> getRecord(HttpServletRequest request, @PathVariable("recordId") Integer recordId) {
+    public ResponseEntity<Map<String,Object>> getRecord(@PathVariable("recordId") Integer recordId) {
         Map<String,Object> returnObj = new HashMap<>();
 
         try{
             Record record = recordService.getRecordById(recordId);
             returnObj.put("data", record);
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
+            return new ResponseEntity<>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){
             returnObj.put("error",e.getMessage());
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<Map<String,Object>> getRecordsOfEmployee(HttpServletRequest request, @PathVariable("employeeId") Integer employeeId) {
+    public ResponseEntity<Map<String,Object>> getRecordsOfEmployee(@PathVariable("employeeId") Integer employeeId) {
         Map<String,Object> returnObj = new HashMap<>();
 
         try{
             returnObj.put("data", recordService.getRecordsOfEmployee(employeeId));
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
+            return new ResponseEntity<>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){
             returnObj.put("error",e.getMessage());
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/last30days")
-    public ResponseEntity<Map<String,Object>> getLast30DaysPresentCount(HttpServletRequest request) {
+    public ResponseEntity<Map<String,Object>> getLast30DaysPresentCount() {
         Map<String,Object> returnObj = new HashMap<>();
 
         try{
             returnObj.put("data", recordService.fetchLast30DaysPresentCount());
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
+            return new ResponseEntity<>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){
             returnObj.put("error",e.getMessage());
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/last30daysreport")
-    public ResponseEntity<Map<String,Object>> getLast30DaysReports(HttpServletRequest request) {
+    public ResponseEntity<Map<String,Object>> getLast30DaysReports() {
         Map<String,Object> returnObj = new HashMap<>();
 
         try{
             returnObj.put("data", recordService.fetchLast30DaysReports());
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
+            return new ResponseEntity<>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){
             returnObj.put("error",e.getMessage());
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Map<String,Object>> getAllRecords(HttpServletRequest request) {
+    public ResponseEntity<Map<String,Object>> getAllRecords() {
         Map<String,Object> returnObj = new HashMap<>();
 
         try{
             returnObj.put("data", recordService.getAllRecords());
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
+            return new ResponseEntity<>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){
             returnObj.put("error",e.getMessage());
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/all/{date}")
-    public ResponseEntity<Map<String,Object>> getAllRecords(HttpServletRequest request,@PathVariable Date date) {
+    public ResponseEntity<Map<String,Object>> getAllRecords(@PathVariable Date date) {
         Map<String,Object> returnObj = new HashMap<>();
 
         try{
             returnObj.put("data", recordService.getAllRecordsByDate(date));
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.OK);
+            return new ResponseEntity<>(returnObj,HttpStatus.OK);
         }
         catch(Exception e){
             returnObj.put("error",e.getMessage());
-            return new ResponseEntity<Map<String,Object>>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(returnObj,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

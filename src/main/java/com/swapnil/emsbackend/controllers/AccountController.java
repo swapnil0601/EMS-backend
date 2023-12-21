@@ -47,7 +47,10 @@ public class AccountController {
         String role = (String) accountMap.get("role");
         Integer departmentId = (Integer) accountMap.get("departmentid");
 
-        Account account = accountService.register(firstName, lastName, email, password, role);
+        System.out.println(role);
+        boolean adminRequestPending = role.equals("admin");
+
+        Account account = accountService.register(firstName, lastName, email, password, "employee", adminRequestPending);
         
         Employee employee = employeeService.add(account.getAccountId());
 
@@ -115,8 +118,9 @@ public class AccountController {
         String email = (String) accountMap.get("email");
         String password = (String) accountMap.get("password");
         String role = (String) accountMap.get("role");
+        Boolean adminRequestPending = (Boolean) accountMap.get("adminrequestpending");
 
-        Account account = new Account(accountId, firstName, lastName, email, password, role);
+        Account account = new Account(accountId, firstName, lastName, email, password, role,adminRequestPending);
         Account updatedAccount = accountService.update(accountId, account);
 
         returnObj.put("success",true);

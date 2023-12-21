@@ -28,16 +28,16 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    private static final String SQL_ACCOUNT_CREATE = "INSERT INTO ACCOUNT (FIRSTNAME,LASTNAME , EMAIL , PASSWORD , ROLE) VALUES(:firstName,:lastName,:email,:password,:role)";
+    private static final String SQL_ACCOUNT_CREATE = "INSERT INTO ACCOUNT (FIRSTNAME,LASTNAME , EMAIL , PASSWORD , ROLE, ADMINREQUESTPENDING) VALUES(:firstName,:lastName,:email,:password,:role,:adminrequestpending)";
 
     private static final String SQL_ACCOUNT_FIND_BY_ID = "SELECT * FROM ACCOUNT WHERE accountid = ?";
 
     private static final String
     SQL_ACCOUNT_FIND_BY_EMAIL 
-    = "SELECT ACCOUNTID , FIRSTNAME , LASTNAME , EMAIL , PASSWORD , ROLE FROM ACCOUNT WHERE EMAIL = ?";
+    = "SELECT ACCOUNTID , FIRSTNAME , LASTNAME , EMAIL , PASSWORD , ROLE,ADMINREQUESTPENDING FROM ACCOUNT WHERE EMAIL = ?";
 
     private static final String SQL_ACCOUNT_UPDATE =
-    "UPDATE ACCOUNT SET FIRSTNAME=? , LASTNAME=? , EMAIL=? , PASSWORD =? WHERE ACCOUNTID=?;";
+    "UPDATE ACCOUNT SET FIRSTNAME=? , LASTNAME=? , EMAIL=? , PASSWORD =?, ADMINREQUESTPENDING=? WHERE ACCOUNTID=?;";
 
     private RowMapper<Account> accountRowMapper = ((rs, rowNum) -> {
         return new Account(
@@ -45,7 +45,8 @@ public class AccountRepositoryImpl implements AccountRepository {
                 rs.getString("FIRSTNAME"),
                 rs.getString("LASTNAME"),
                 rs.getString("EMAIL"),
-                rs.getString("ROLE"));
+                rs.getString("ROLE"),
+                rs.getBoolean("ADMINREQUESTPENDING"));
     });
 
     private RowMapper<Account> accountRowMapperWithPassword = ((rs, rowNum) -> {
@@ -55,11 +56,12 @@ public class AccountRepositoryImpl implements AccountRepository {
                 rs.getString("LASTNAME"),
                 rs.getString("EMAIL"),
                 rs.getString("PASSWORD"),
-                rs.getString("ROLE"));
+                rs.getString("ROLE"),
+                rs.getBoolean("ADMINREQUESTPENDING"));
     });
 
     @Override
-    public Account create(String firstName, String lastName, String email, String password, String role) throws AuthException {
+    public Account create(String firstName, String lastName, String email, String password, String role, Boolean adminRequestPending) throws AuthException {
 
         Account createdAccount=null;
         String hashPassword = BCrypt.hashpw(password, BCrypt.gensalt(10));
@@ -71,6 +73,7 @@ public class AccountRepositoryImpl implements AccountRepository {
             paramMap.put("email", email);
             paramMap.put("password", hashPassword);
             paramMap.put("role", role);
+            paramMap.put("adminrequestpending", adminRequestPending);
             namedParameterJdbcTemplate.update(SQL_ACCOUNT_CREATE, new MapSqlParameterSource(paramMap), keyHolder);
             Integer accountId = (Integer) keyHolder.getKeys().get("ACCOUNTID");
             createdAccount = findById(accountId);
@@ -120,7 +123,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         try {
             String hashedPassword = BCrypt.hashpw(account.getPassword(), BCrypt.gensalt(10));
             jdbcTemplate.update(SQL_ACCOUNT_UPDATE,new Object[] {
-                account.getFirstName(),account.getLastName(),account.getEmail(),hashedPassword,accountId
+                account.getFirstName(),account.getLastName(),account.getEmail(),hashedPassword,account.getAdminRequestPending(),accountId
             });
         } catch (Exception e) {
             throw new NotFoundException("Account does not exist.");

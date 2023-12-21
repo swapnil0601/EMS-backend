@@ -22,9 +22,9 @@ public class EmployeeRepositoryImpl implements EmployeeRepository{
     
     private static final String SQL_EMPLOYEE_CREATE = "INSERT INTO EMPLOYEE(ACCOUNTID) VALUES(?);";
 
-    private static final String SQL_FIND_ALL_EMPLOYEE = " SELECT EMPLOYEEID , E.ACCOUNTID , FIRSTNAME , LASTNAME , EMAIL , ROLE FROM EMPLOYEE E JOIN ACCOUNT A ON E.ACCOUNTID=A.ACCOUNTID;";
+    private static final String SQL_FIND_ALL_EMPLOYEE = " SELECT EMPLOYEEID , E.ACCOUNTID , FIRSTNAME , LASTNAME , EMAIL , ROLE, A.ADMINREQUESTPENDING FROM EMPLOYEE E JOIN ACCOUNT A ON E.ACCOUNTID=A.ACCOUNTID;";
 
-    private static final String SQL_FIND_EMPLOYEE_BY_ID = " SELECT EMPLOYEEID , E.ACCOUNTID , FIRSTNAME , LASTNAME , EMAIL , ROLE FROM EMPLOYEE E JOIN ACCOUNT A ON E.ACCOUNTID=A.ACCOUNTID AND EMPLOYEEID = ?;";
+    private static final String SQL_FIND_EMPLOYEE_BY_ID = " SELECT EMPLOYEEID , E.ACCOUNTID , FIRSTNAME , LASTNAME , EMAIL , ROLE, A.ADMINREQUESTPENDING FROM EMPLOYEE E JOIN ACCOUNT A ON E.ACCOUNTID=A.ACCOUNTID AND EMPLOYEEID = ?;";
 
     private static final String SQL_FETCH_EMPLOYEEID_FOR_ACCOUNTID = "SELECT EMPLOYEEID FROM EMPLOYEE WHERE ACCOUNTID = ?;";
 
@@ -42,6 +42,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository{
                 rs.getString("LASTNAME"),
                 rs.getString("EMAIL"),
                 rs.getString("ROLE"),
+                rs.getBoolean("ADMINREQUESTPENDING"),
                 rs.getInt("EMPLOYEEID"));
     });
     private RowMapper<Integer> employeeIdRowMapper = ((rs,rowNum) -> {

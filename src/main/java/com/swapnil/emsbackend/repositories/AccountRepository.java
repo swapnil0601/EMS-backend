@@ -5,7 +5,7 @@ import com.swapnil.emsbackend.exceptions.NotFoundException;
 import com.swapnil.emsbackend.models.Account;
 
 public interface AccountRepository {
-    Account create(String firstName, String lastName, String email, String password, String role) throws AuthException;
+    Account create(String firstName, String lastName, String email, String password, String role, Boolean adminRequestPending) throws AuthException;
 
     Account findById(Integer accountId) throws NotFoundException;
 

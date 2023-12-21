@@ -6,9 +6,11 @@ import com.swapnil.emsbackend.exceptions.InvalidRequestException;
 import com.swapnil.emsbackend.models.Account;
 
 public interface AdminRepository {
-    void assignAdmin(Integer userId) throws Exception;
+    List<Account> findAll();
 
-    void removeAdmin(Integer userId) throws Exception;
+    List<Account> findAllPending();
 
-    List<Account> getAllAdmins() throws InvalidRequestException;
+    void makeAdmin(Integer accountId) throws InvalidRequestException;
+
+    void declineAdmin(Integer accountId) throws InvalidRequestException;
 }

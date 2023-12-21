@@ -28,7 +28,7 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
     private static final String SQL_FIND_DEPARTMENT_BY_ID = "SELECT * FROM DEPARTMENT WHERE DEPARTMENTID = ?;";
 
     private static final String
-    SQL_FIND_ASSIGNED_EMPLOYEES = "SELECT E.EMPLOYEEID ,U.*,DA.DEPARTMNETID FROM EMPLOYEE E JOIN DEPARTMENTASSIGNMENT DA ON E.EMPLOYEEID = DA.EMPLOYEEID AND DA.DEPARTMENTID=? JOIN USER U ON E.USERID = U.USERID;";
+    SQL_FIND_ASSIGNED_EMPLOYEES = "SELECT E.EMPLOYEEID ,A.*,DA.DEPARTMNETID FROM EMPLOYEE E JOIN DEPARTMENTASSIGNMENT DA ON E.EMPLOYEEID = DA.EMPLOYEEID AND DA.DEPARTMENTID=? JOIN ACCOUNT A ON E.ACCOUNTID = A.ACCOUNTID;";
 
     private static final String SQL_UPDATE_DEPARTMENT = "UPDATE DEPARTMENT SET DEPARTMENTNAME = ? WHERE DEPARTMENTID = ?;";
 
@@ -51,7 +51,9 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
             rs.getString("LASTNAME"),
             rs.getString("EMAIL"),
             rs.getString("ROLE"),
+                rs.getBoolean("ADMINREQUESTPENDING"),
             rs.getInt("EMPLOYEEID")
+
         );
     });
 

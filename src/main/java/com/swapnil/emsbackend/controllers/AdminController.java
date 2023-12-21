@@ -6,11 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.swapnil.emsbackend.Constants;
 import com.swapnil.emsbackend.services.AdminService;
@@ -23,23 +19,57 @@ public class AdminController {
     @Autowired
     AdminService adminService;
 
-    @PostMapping("/makeAdmin/{accountId}")
-    public ResponseEntity<Map<String, Object>> makeAdmin(HttpServletRequest request,
-            @PathVariable("accountId") Integer accountId, @RequestBody Map<String, Object> map) {
-
-        Map<String, Object> returnObject = new HashMap<>();
-        String token = (String) map.get("token");
-        Map<String, Object> tokenMap = Constants.validateToken(token);
-
-        if (tokenMap.get("valid") == (Boolean) false) {
-            returnObject.put("error", "invalid token");
-        } else if (tokenMap.get("role").equals("admin")) {
-            adminService.makeAdmin(accountId);
-            returnObject.put("succes", true);
-        } else {
-            returnObject.put("error", "unauthorized access");
+    @GetMapping("/all")
+    public ResponseEntity<Map<String, Object>> getAll(HttpServletRequest request){
+        Map<String, Object> response = new HashMap<>();
+        try{
+            response.put("data", adminService.getAll());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch(Exception e){
+            response.put("message", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
+    }
 
-        return new ResponseEntity<Map<String, Object>>(returnObject, HttpStatus.OK);
+    @GetMapping("/pending")
+    public ResponseEntity<Map<String, Object>> getAllPending(HttpServletRequest request){
+        Map<String, Object> response = new HashMap<>();
+        try{
+            response.put("data", adminService.getAllPending());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch(Exception e){
+            response.put("message", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/accept")
+    public ResponseEntity<Map<String, Object>> makeAdmin(@RequestBody Map<String,Object> requestMap, HttpServletRequest request){
+        Map<String, Object> response = new HashMap<>();
+        System.out.println(requestMap);
+        Integer accountId = (Integer) requestMap.get("accountId");
+        try{
+            adminService.makeAdmin(accountId);
+            response.put("message", "Admin request accepted");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch(Exception e){
+            response.put("message", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/decline")
+    public ResponseEntity<Map<String, Object>> declineAdmin(@RequestBody Map<String,Object> requestMap, HttpServletRequest request){
+        Map<String, Object> response = new HashMap<>();
+        System.out.println(requestMap);
+        Integer accountId = (Integer) requestMap.get("accountId");
+        try{
+            adminService.declineAdmin(accountId);
+            response.put("message", "Admin request declined");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch(Exception e){
+            response.put("message", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
     }
 }

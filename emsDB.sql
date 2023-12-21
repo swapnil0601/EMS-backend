@@ -12,7 +12,8 @@ CREATE TABLE account (
   lastname VARCHAR,
   email VARCHAR(50) NOT NULL UNIQUE,
   password TEXT NOT NULL,
-  role VARCHAR(20)
+  role VARCHAR(20),
+  adminRequestPending BOOLEAN
 );
 
 -- Create the employee table
